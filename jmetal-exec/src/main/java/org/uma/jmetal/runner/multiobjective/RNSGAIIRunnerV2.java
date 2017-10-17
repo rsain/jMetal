@@ -95,12 +95,14 @@ public class RNSGAIIRunnerV2 extends AbstractAlgorithmRunner {
     referencePoint.add(0.8) ;
     referencePoint.add(0.2) ;*/
     //Example fig 2 paper Deb
-  /*  referencePoint.add(0.2) ;
+    referencePoint.add(0.2) ;
     referencePoint.add(0.4) ;
     referencePoint.add(0.8) ;
-    referencePoint.add(0.4) ;*/
+    referencePoint.add(0.4) ;
+    //referencePoint.add(0.0) ;
+    //referencePoint.add(0.0) ;
     //Example fig 3 paper Deb
-    referencePoint.add(0.1) ;
+   /* referencePoint.add(0.1) ;
     referencePoint.add(0.6) ;
 
     referencePoint.add(0.3) ;
@@ -113,7 +115,7 @@ public class RNSGAIIRunnerV2 extends AbstractAlgorithmRunner {
     referencePoint.add(0.2) ;
 
     referencePoint.add(0.9) ;
-    referencePoint.add(0.0) ;
+    referencePoint.add(0.0) ;*/
     /*referencePoint.add(0.1) ;
     referencePoint.add(1.0) ;
     referencePoint.add(1.0) ;
@@ -127,7 +129,7 @@ public class RNSGAIIRunnerV2 extends AbstractAlgorithmRunner {
     //referencePoint.add(1.0);
 
     //referencePoint.add(1.0) ;
-    //referencePoint.add(0.6);
+    //referencePoint.add(1.0);
     //referencePoint.add(0.4) ;
     //referencePoint.add(0.8);
 

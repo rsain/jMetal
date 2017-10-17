@@ -7,6 +7,7 @@ import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.selection.RankingAndCrowdingSelection;
 import org.uma.jmetal.operator.impl.selection.RankingAndPreferenceSelection;
+import org.uma.jmetal.operator.impl.selection.RankingAndPreferenceSelectionv2;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.SolutionListUtils;
@@ -56,8 +57,10 @@ public class RNSGAIIv2<S extends Solution<?>> extends NSGAII<S> {
     jointPopulation.addAll(population);
     jointPopulation.addAll(offspringPopulation);
 
-    RankingAndPreferenceSelection<S> rankingAndCrowdingSelection ;
-    rankingAndCrowdingSelection = new RankingAndPreferenceSelection<S>(getMaxPopulationSize(),interestPoint,epsilon) ;
+    //RankingAndPreferenceSelection<S> rankingAndCrowdingSelection ;
+    //rankingAndCrowdingSelection = new RankingAndPreferenceSelection<S>(getMaxPopulationSize(),interestPoint,epsilon) ;
+    RankingAndPreferenceSelectionv2<S> rankingAndCrowdingSelection ;
+    rankingAndCrowdingSelection = new RankingAndPreferenceSelectionv2<S>(getMaxPopulationSize(),interestPoint,epsilon) ;
 
     return rankingAndCrowdingSelection.execute(jointPopulation) ;
   }
