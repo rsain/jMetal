@@ -1,5 +1,6 @@
 package org.uma.jmetal.algorithm.multiobjective.rnsgaii;
 
+import org.uma.jmetal.algorithm.InteractiveAlgorithm;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAII;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
@@ -11,16 +12,17 @@ import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.uma.jmetal.util.referencePoint.ReferencePoint;
 
 /**
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 @SuppressWarnings("serial")
-public class RNSGAII<S extends Solution<?>> extends NSGAII<S> {
+public class RNSGAII<S extends Solution<?>> extends NSGAII<S> implements InteractiveAlgorithm<S,List<S>>{
 
 
-  private List<Double> interestPoint;
-  private  double epsilon;
+  protected List<Double> interestPoint;
+  protected   double epsilon;
 
   /**
    * Constructor
@@ -73,4 +75,16 @@ public class RNSGAII<S extends Solution<?>> extends NSGAII<S> {
   @Override public String getDescription() {
     return "Nondominated Sorting Genetic Algorithm version II" ;
   }
+
+  @Override
+  public void updateInterestPoint(List<ReferencePoint> newReferencePoints) {
+    List<Double> doubleList = new ArrayList<>();
+    for (ReferencePoint ref:newReferencePoints) {
+      for (int i = 0; i < ref.getNumberOfObjectives(); i++) {
+        doubleList.add(ref.getObjective(i));
+      }
+    }
+    this.updateReferencePoint(doubleList);
+  }
+
 }

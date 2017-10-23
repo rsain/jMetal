@@ -1,5 +1,6 @@
 package org.uma.jmetal.algorithm.multiobjective.wasfga;
 
+import org.uma.jmetal.algorithm.InteractiveAlgorithm;
 import org.uma.jmetal.algorithm.multiobjective.mombi.AbstractMOMBI;
 import org.uma.jmetal.algorithm.multiobjective.mombi.util.ASFWASFGA;
 import org.uma.jmetal.algorithm.multiobjective.mombi.util.AbstractUtilityFunctionsSet;
@@ -15,6 +16,7 @@ import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
+import org.uma.jmetal.util.referencePoint.ReferencePoint;
 import org.uma.jmetal.util.solutionattribute.Ranking;
 
 import java.util.ArrayList;
@@ -32,7 +34,8 @@ import java.util.List;
  *         Issue 1, pp 101-129
  *         DOI = {10.1007/s10898-014-0214-y}
  */
-public class WASFGA<S extends Solution<?>> extends AbstractMOMBI<S> {
+public class WASFGA<S extends Solution<?>> extends AbstractMOMBI<S> implements
+		InteractiveAlgorithm<S,List<S>>{
 	/**
 	 *
 	 */
@@ -188,5 +191,15 @@ public class WASFGA<S extends Solution<?>> extends AbstractMOMBI<S> {
 
 	@Override public String getDescription() {
 		return "Weighting Achievement Scalarizing Function Genetic Algorithm" ;
+	}
+	@Override
+	public void updateInterestPoint(List<ReferencePoint> newReferencePoints) {
+		List<Double> doubleList = new ArrayList<>();
+		for (ReferencePoint ref:newReferencePoints) {
+			for (int i = 0; i < ref.getNumberOfObjectives(); i++) {
+				doubleList.add(ref.getObjective(i));
+			}
+		}
+		this.updatePointOfInterest(doubleList);
 	}
 }
