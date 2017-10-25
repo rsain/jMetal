@@ -43,16 +43,16 @@ public abstract class AutomaticReferencePoint<S, R> implements Algorithm<R> {
     List<ReferencePoint> initialReferencePoints=generatePreferenceInformation();
     R front;
     //int numberObjectives = initialReferencePoints.get(0).getNumberOfObjectives();
-    List<ReferencePoint> referencePointsToExecute=initialReferencePoints;
+    List<ReferencePoint> interestingPoint=initialReferencePoints;
     initProgress();
     while (!isStoppingConditionReached()) {
-      this.algorithm.updateInterestPoint(referencePointsToExecute);
+      this.algorithm.updateInterestPoint(interestingPoint);
       this.algorithm.run();
-      referencePointsToExecute= new ArrayList<>();
+      //interestingPoint= new ArrayList<>();
       front=this.algorithm.getResult();
       updateParetoOptimal(front,paretoOptimalSolutions);
       indexOfRelevantObjectiveFunctions=relevantObjectiveFunctions(front);
-      referencePointsToExecute = calculateReferencePoints(indexOfRelevantObjectiveFunctions,front,paretoOptimalSolutions);
+      interestingPoint = calculateReferencePoints(indexOfRelevantObjectiveFunctions,front,paretoOptimalSolutions);
      /* int index = 0;
       ReferencePoint referencePoint = new IdealPoint(numberObjectives);
       while (index< numberObjectives){

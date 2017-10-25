@@ -160,8 +160,8 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
             referencePoint.setObjective(i,
                 asp.getObjective(i) - (asp.getObjective(i) - solution.getObjective(i)) / 2);
           } else {
-            //predict the reference pointpo
-            referencePoint.setObjective(i, prediction(i,paretoOptimalSolutions));
+            //predict the i position of reference point
+            referencePoint.setObjective(i, prediction(i,paretoOptimalSolutions,solution));
           }
         }
         result.add(referencePoint);
@@ -189,9 +189,11 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
     //FALTA PREDICTION
     return currentReferencePoint.getObjective(index);
   }*/
- private double prediction(int index,List<S> paretoOptimalSolutions) {
+ private double prediction(int index,List<S> paretoOptimalSolutions,S solution) {
    //FALTA PREDICTION
+   DecisionTreeEstimator<S> dte = new DecisionTreeEstimator<S>(paretoOptimalSolutions);
 
+   double data=dte.doPrediction(index,solution);
    return currentReferencePoint.getObjective(index);
  }
   @Override
