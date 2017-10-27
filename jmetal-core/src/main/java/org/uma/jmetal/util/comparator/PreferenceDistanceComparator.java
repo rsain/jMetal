@@ -1,10 +1,10 @@
 package org.uma.jmetal.util.comparator;
 
-import java.io.Serializable;
-import java.util.Comparator;
-import java.util.List;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.solutionattribute.impl.PreferenceDistance;
+
+import java.io.Serializable;
+import java.util.Comparator;
 
 public class PreferenceDistanceComparator <S extends Solution<?>> implements Comparator<S>,
     Serializable {

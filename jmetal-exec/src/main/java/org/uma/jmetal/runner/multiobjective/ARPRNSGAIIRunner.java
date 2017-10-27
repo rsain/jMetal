@@ -13,18 +13,10 @@
 
 package org.uma.jmetal.runner.multiobjective;
 
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.InteractiveAlgorithm;
 import org.uma.jmetal.algorithm.multiobjective.arp.ARP;
 import org.uma.jmetal.algorithm.multiobjective.arp.ARPBuilder;
-import org.uma.jmetal.algorithm.multiobjective.rnsgaii.RNSGAIIARPBuilder;
 import org.uma.jmetal.algorithm.multiobjective.rnsgaii.RNSGAIIBuilder;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
@@ -40,11 +32,17 @@ import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
-import org.uma.jmetal.util.referencePoint.AutomaticReferencePoint;
 import org.uma.jmetal.util.referencePoint.ReferencePoint;
-import org.uma.jmetal.util.referencePoint.impl.ARPInteractive;
 import org.uma.jmetal.util.referencePoint.impl.IdealPoint;
 import org.uma.jmetal.util.referencePoint.impl.NadirPoint;
+
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class to configure and run the R-NSGA-II algorithm

@@ -1,11 +1,5 @@
 package org.uma.jmetal.algorithm.multiobjective.arp;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import org.uma.jmetal.algorithm.InteractiveAlgorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
@@ -17,6 +11,8 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.referencePoint.ReferencePoint;
 import org.uma.jmetal.util.referencePoint.impl.IdealPoint;
 import org.uma.jmetal.util.referencePoint.impl.NadirPoint;
+
+import java.util.*;
 
 public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<S>> {
 

@@ -1,11 +1,12 @@
 package org.uma.jmetal.algorithm.multiobjective.arp;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.InteractiveAlgorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.util.referencePoint.ReferencePoint;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AutomaticReferencePoint<S, R> implements Algorithm<R> {
 

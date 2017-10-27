@@ -1,9 +1,5 @@
 package org.uma.jmetal.operator.impl.selection;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalException;
@@ -12,6 +8,10 @@ import org.uma.jmetal.util.comparator.PreferenceDistanceComparator;
 import org.uma.jmetal.util.solutionattribute.Ranking;
 import org.uma.jmetal.util.solutionattribute.impl.DominanceRanking;
 import org.uma.jmetal.util.solutionattribute.impl.PreferenceDistance;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class RankingAndPreferenceSelection<S extends Solution<?>>
         implements SelectionOperator<List<S>,List<S>> {

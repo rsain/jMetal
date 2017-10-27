@@ -1,18 +1,18 @@
 package org.uma.jmetal.algorithm.multiobjective.arp;
 
-import java.util.ArrayList;
-import java.util.Random;
+import org.uma.jmetal.solution.Solution;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
-import java.util.List;
-import org.uma.jmetal.solution.Solution;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DecisionTreeEstimator<S extends Solution<?>> {
 
