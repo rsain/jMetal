@@ -15,6 +15,7 @@ import org.uma.jmetal.util.referencePoint.impl.NadirPoint;
 import java.util.*;
 
 public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<S>> {
+                                       //    calculateDistance(front.get(0),currentReferencePoint);
 
   protected IdealPoint idealOjectiveVector = null;
   protected NadirPoint nadirObjectiveVector = null;
@@ -30,6 +31,8 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
   protected int maxEvaluations;
   protected List<ReferencePoint> allReferencePoints;
   protected ReferencePoint currentReferencePoint;
+  protected List<Double> distances;
+  private S solutionRun=null;
   public ARP(Problem<S> problem,
       InteractiveAlgorithm<S,List<S>> algorithm,double considerationProbability,double tolerance,int maxEvaluations
   ,List<Double> rankingCoeficient,int numberReferencePoints) {
@@ -45,7 +48,7 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
     }
     this.numberReferencePoints = numberReferencePoints;
     this.allReferencePoints = new ArrayList<>();
-
+    this.distances = new ArrayList<>();
   }
 
 
@@ -88,6 +91,7 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
         }
       }
       referencePoints.add(referencePoint);
+      calculateDistance(solutions.get(0),referencePoint);
     }
     currentReferencePoint = referencePoints.get(0);
     allReferencePoints.addAll(referencePoints);
@@ -163,9 +167,19 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
         result.add(referencePoint);
       }
     }
+
     currentReferencePoint = result.get(0);
     allReferencePoints.addAll(result);
+
     return result;
+  }
+
+  private void calculateDistance(S solution, ReferencePoint referencePoint){
+    EuclideanDistance euclideanDistance = new EuclideanDistance();
+
+    double distance = euclideanDistance.compute(getPointFromSolution(solution),
+        getPointFromReferencePoint(referencePoint));
+    distances.add(distance);
   }
   private ReferencePoint getReferencePointFromSolution(S solution) {
     ReferencePoint result = new IdealPoint(solution.getNumberOfObjectives());
@@ -190,7 +204,7 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
    DecisionTreeEstimator<S> dte = new DecisionTreeEstimator<S>(paretoOptimalSolutions);
 
    double data=dte.doPrediction(index,solution);
-   return currentReferencePoint.getObjective(index);
+   return data;//currentReferencePoint.getObjective(index);
  }
   @Override
   protected void updateParetoOptimal(List<S> front,List<S> paretoOptimalSolutions) {
@@ -200,6 +214,14 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
   @Override
   public List<ReferencePoint> getReferencePoints() {
     return allReferencePoints;
+  }
+
+  @Override
+  public List<Double> getDistances() {
+    for (ReferencePoint referencePoint:allReferencePoints) {
+       calculateDistance(getSolution(paretoOptimalSolutions,referencePoint),referencePoint);
+    }
+    return distances;
   }
 
   private S getSolution(List<S> front, ReferencePoint referencePoint) {

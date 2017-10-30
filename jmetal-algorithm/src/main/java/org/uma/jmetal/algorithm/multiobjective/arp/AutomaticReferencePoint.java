@@ -31,7 +31,7 @@ public abstract class AutomaticReferencePoint<S, R> implements Algorithm<R> {
       List<Integer> indexOfRelevantObjectiveFunctions,R front,List<S> paretoOptimalSolutions);
   protected abstract void updateParetoOptimal(R front,List<S> paretoOptimalSolutions);
   public abstract List<ReferencePoint> getReferencePoints();
-
+  public abstract List<Double> getDistances();
   @Override
   public void run() {
     List<ReferencePoint> initialReferencePoints=generatePreferenceInformation();
