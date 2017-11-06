@@ -29,6 +29,9 @@ import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
 import org.uma.jmetal.operator.impl.selection.DifferentialEvolutionSelection;
 import org.uma.jmetal.problem.DoubleProblem;
 import org.uma.jmetal.problem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ4;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.problem.singleobjective.ACH;
 import org.uma.jmetal.runner.AbstractAlgorithmRunner;
@@ -74,7 +77,7 @@ public class ARPRDifferentialEvolutionaryRunner extends AbstractAlgorithmRunner 
 
 
 
-    problem =new ZDT1();//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
+    problem =new DTLZ3(7,4);//ZDT1();//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
 
     int numberOfCores ;
     if (args.length == 1) {
@@ -107,6 +110,8 @@ public class ARPRDifferentialEvolutionaryRunner extends AbstractAlgorithmRunner 
     List<Double> referencePoint = new ArrayList<>() ;
     referencePoint.add(0.0);
     referencePoint.add(0.0);
+    referencePoint.add(0.0);
+    referencePoint.add(0.0);
     double rho =0.05;
     problemRun = new ACH(referencePoint,(AbstractDoubleProblem)problem,rho);
     algorithmRun = new DifferentialEvolutionARPBuilder(problemRun)
@@ -123,9 +128,9 @@ public class ARPRDifferentialEvolutionaryRunner extends AbstractAlgorithmRunner 
         .build() ;*/
 
     algorithm = new ARPSingleBuilder<DoubleSolution>(problemRun, algorithmRun)
-        .setConsiderationProbability(0.9)
-        .setMaxEvaluations(50)
-        .setTolerance(0.5)
+        .setConsiderationProbability(0.7)
+        .setMaxEvaluations(20)
+        .setTolerance(0.001)
         .setNumberOfObjectives(problem.getNumberOfObjectives())
         .build();
 
@@ -147,8 +152,8 @@ public class ARPRDifferentialEvolutionaryRunner extends AbstractAlgorithmRunner 
     JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
     JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
     System.out.println("Reference Points-----"+((ARPSingle)algorithm).getReferencePoints().size());
-    writeLargerTextFile("ReferencePointsNuevo.txt",((ARPSingle)algorithm).getReferencePoints());
-    writeLargerDoubleFile("Distances.txt",((ARPSingle)algorithm).getDistances());
+    writeLargerTextFile("ReferencePointsDE_DTLZ3_4.txt",((ARPSingle)algorithm).getReferencePoints());
+    writeLargerDoubleFile("DistancesDE_DTLZ3_4.txt",((ARPSingle)algorithm).getDistances());
     evaluator.shutdown();
   }
   private static List<Double> getReferencePoint(ReferencePoint referencePoint){

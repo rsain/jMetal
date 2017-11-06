@@ -2,6 +2,12 @@ package org.uma.jmetal.algorithm.multiobjective.arp;
 
 import org.uma.jmetal.algorithm.InteractiveAlgorithm;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.impl.AbstractBinaryProblem;
+import org.uma.jmetal.problem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.problem.impl.AbstractGenericProblem;
+import org.uma.jmetal.problem.impl.AbstractIntegerDoubleProblem;
+import org.uma.jmetal.problem.impl.AbstractIntegerPermutationProblem;
+import org.uma.jmetal.problem.impl.AbstractIntegerProblem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
 import org.uma.jmetal.util.point.Point;
@@ -60,12 +66,31 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
   }
 
   private void updateObjectiveVector(List<S> solutionList){
-    for (int j = 0; j < numberOfObjectives; j++) {
+   for (int j = 0; j < numberOfObjectives; j++) {
       Collections.sort(solutionList, new ObjectiveComparator<>(j));
       double objetiveMinn = solutionList.get(0).getObjective(j);
       double objetiveMaxn = solutionList.get(solutionList.size() - 1).getObjective(j);
       idealOjectiveVector.setObjective(j,objetiveMinn);
       nadirObjectiveVector.setObjective(j,objetiveMaxn);
+    }
+    if(problem instanceof AbstractDoubleProblem){
+      AbstractDoubleProblem aux =(AbstractDoubleProblem)problem;
+      for (int i = 0; i < numberOfObjectives ; i++) {
+        idealOjectiveVector.setObjective(i,aux.getLowerBound(i));
+        nadirObjectiveVector.setObjective(i,aux.getUpperBound(i));
+      }
+    }else if(problem instanceof AbstractIntegerProblem){
+      AbstractIntegerProblem aux =(AbstractIntegerProblem)problem;
+      for (int i = 0; i < numberOfObjectives ; i++) {
+        idealOjectiveVector.setObjective(i,aux.getLowerBound(i));
+        nadirObjectiveVector.setObjective(i,aux.getUpperBound(i));
+      }
+    }else if(problem instanceof AbstractIntegerDoubleProblem){
+      AbstractIntegerDoubleProblem aux =(AbstractIntegerDoubleProblem)problem;
+      for (int i = 0; i < numberOfObjectives ; i++) {
+        idealOjectiveVector.setObjective(i,aux.getLowerBound(i).doubleValue());
+        nadirObjectiveVector.setObjective(i,aux.getUpperBound(i).doubleValue());
+      }
     }
     asp = idealOjectiveVector;
   }
@@ -75,10 +100,11 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
 
     idealOjectiveVector = new IdealPoint(numberOfObjectives);
     nadirObjectiveVector = new NadirPoint(numberOfObjectives);
+
     List<S> solutions = new ArrayList<>();
     solutions.add(problem.createSolution());
     updateObjectiveVector(solutions);
-    solutionRun = solutions.get(0);
+   // solutionRun = solutions.get(0);
     asp = idealOjectiveVector;
     List<ReferencePoint> referencePoints  = new ArrayList<>();
     for (int i=0;i < numberReferencePoints;i++){
@@ -100,7 +126,11 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
 
   @Override
   protected boolean isStoppingConditionReached() {
-    return evaluations >= maxEvaluations;
+    boolean stop = evaluations >= maxEvaluations;
+    if(distances!=null){
+      stop = stop || distances.contains(0.0);
+    }
+    return stop;
   }
 
   @Override
@@ -118,7 +148,7 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
   protected List<Integer> relevantObjectiveFunctions(List<S> front) {
     List<Integer> order = new ArrayList<>();
     List<Integer> indexRelevantObjectivesFunctions = new ArrayList<>();
-    updateObjectiveVector(front);
+    //updateObjectiveVector(front);
     SortedMap<Double, List<Integer>> map = new TreeMap<>(Collections.reverseOrder());
     for (int i = 0; i < rankingCoeficient.size(); i++) {
       List<Integer> aux = map.getOrDefault(rankingCoeficient.get(i), new ArrayList<>());
@@ -132,7 +162,7 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
     S solution = getSolution(front,currentReferencePoint);
     for (Integer i : order) {
       double rand = random.nextDouble(0.0, 1.0);
-      if (asp.getObjective(i) - solution.getObjective(i) < tolerance
+      if ((asp.getObjective(i) - solution.getObjective(i)) < tolerance
           && rand < considerationProbability) {
         indexRelevantObjectivesFunctions.add(i);
       } else if (rand < varyingProbability) {
@@ -150,13 +180,14 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
     List<S> temporal = new ArrayList<>(front);
 
     for(int numRefPoint=0;numRefPoint<numberReferencePoints;numRefPoint++){
-      calculateDistance(solutionRun,currentReferencePoint);
+      if(solutionRun!=null)
+        calculateDistance(solutionRun,currentReferencePoint);
       S solution = getSolution(temporal,currentReferencePoint);
       solutionRun = solution;
       temporal.remove(solution);
-      if (indexOfRelevantObjectiveFunctions.size() == numberOfObjectives) {
-        result.add(getReferencePointFromSolution(solution));
-      } else {
+     // if (indexOfRelevantObjectiveFunctions.size() == numberOfObjectives) {
+       // result.add(getReferencePointFromSolution(solution));
+      //} else {
         ReferencePoint referencePoint = new IdealPoint(numberOfObjectives);
         for (int i = 0; i < referencePoint.getNumberOfObjectives(); i++) {
           if (indexOfRelevantObjectiveFunctions.contains(i)) {
@@ -168,7 +199,7 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
           }
         }
         result.add(referencePoint);
-      }
+      //}
     }
 
     currentReferencePoint = result.get(0);

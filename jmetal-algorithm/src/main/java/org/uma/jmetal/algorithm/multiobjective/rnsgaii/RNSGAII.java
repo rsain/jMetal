@@ -69,7 +69,7 @@ public class RNSGAII<S extends Solution<?>> extends NSGAII<S> implements Interac
 
 
   @Override public String getName() {
-    return "RNSGAII_Ant" ;
+    return "RNSGAII" ;
   }
 
   @Override public String getDescription() {

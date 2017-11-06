@@ -48,7 +48,7 @@ public class RankingAndPreferenceSelection<S extends Solution<?>>
         List<S> aux = new ArrayList<>(solutionList);
         Ranking<S> ranking = new DominanceRanking<S>();
         ranking.computeRanking(aux);
-rankingIndex=0;
+        rankingIndex=0;
         for(int n = 0;n<nInteresPoint;n++) {
 
 
@@ -82,8 +82,8 @@ rankingIndex=0;
                 rankingIndex++;
             } else {
                //addLastRankedSolutionsToPopulationPreference(ranking, rankingIndex, population,preferenceDistance,sizeList);
-               addLastRankedSolutionsToPopulation(ranking, rankingIndex, population,sizeList);
-rankingIndex++;
+                addLastRankedSolutionsToPopulation(ranking, rankingIndex, population,sizeList);
+                rankingIndex++;
             }
         }
 

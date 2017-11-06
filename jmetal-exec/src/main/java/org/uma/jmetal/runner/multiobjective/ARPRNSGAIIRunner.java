@@ -18,6 +18,7 @@ import org.uma.jmetal.algorithm.InteractiveAlgorithm;
 import org.uma.jmetal.algorithm.multiobjective.arp.ARP;
 import org.uma.jmetal.algorithm.multiobjective.arp.ARPBuilder;
 import org.uma.jmetal.algorithm.multiobjective.rnsgaii.RNSGAIIBuilder;
+import org.uma.jmetal.algorithm.singleobjective.arp.ARPSingle;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
@@ -25,6 +26,10 @@ import org.uma.jmetal.operator.impl.crossover.SBXCrossover;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ4;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.runner.AbstractAlgorithmRunner;
 import org.uma.jmetal.solution.DoubleSolution;
@@ -78,7 +83,7 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
       referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf" ;
     }
 
-    problem =new ZDT1();//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
+    problem =new DTLZ2(7,6);//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
 
     double crossoverProbability = 0.9 ;
     double crossoverDistributionIndex = 20.0 ;
@@ -103,6 +108,10 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
     double tolerance = 0.5;
 
     List<Double> referencePoint = new ArrayList<>() ;
+    referencePoint.add(0.0);
+    referencePoint.add(0.0);
+    referencePoint.add(0.0);
+    referencePoint.add(0.0);
     referencePoint.add(0.0);
     referencePoint.add(0.0);
     /*referencePoint.add(0.0) ;
@@ -163,9 +172,9 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
         .setPopulationSize(100)
         .build() ;
     algorithm = new ARPBuilder<DoubleSolution>(problem, algorithmRun)
-        .setConsiderationProbability(0.9)
-        .setMaxEvaluations(10)
-        .setTolerance(0.5)
+        .setConsiderationProbability(0.7)
+        .setMaxEvaluations(20)
+        .setTolerance(0.001)
         .build();
 
     AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
@@ -177,11 +186,13 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
     JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
 
     printFinalSolutionSet(population);
-    if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront) ;
-    }
+   // if (!referenceParetoFront.equals("")) {
+   //   printQualityIndicators(population, referenceParetoFront) ;
+  //  }
     System.out.println("Reference Points-----"+((ARP)algorithm).getReferencePoints().size());
-    writeLargerTextFile("ReferencePointsNuevo.txt",((ARP)algorithm).getReferencePoints());
+    writeLargerTextFile("ReferencePointRNSGAII_DTLZ2_6.txt",((ARP)algorithm).getReferencePoints());
+    writeLargerDoubleFile("DistancesRNSGAII_DTLZ2_6.txt",((ARP)algorithm).getDistances());
+
   }
   private static List<Double> getReferencePoint(ReferencePoint referencePoint){
     List<Double> result = new ArrayList<>();
@@ -202,6 +213,21 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
         }
         line = line.substring(0,line.lastIndexOf(" "));
         i+=2;
+        writer.write(line);
+        writer.newLine();
+      }
+      writer.close();
+    }catch (Exception e){
+
+    }
+  }
+  private static void writeLargerDoubleFile(String aFileName, List<Double> list)  {
+    Path path = Paths.get(aFileName);
+    try (BufferedWriter writer = Files.newBufferedWriter(path)){
+      int i =0;
+      for (Double value:list) {
+        String line="";
+        line += value + " ";
         writer.write(line);
         writer.newLine();
       }

@@ -43,6 +43,17 @@ public class ACH extends AbstractDoubleProblem {
 		createUtopia(interestPoint.size());
 	}
 
+	@Override
+	public Double getUpperBound(int index) {
+		return problem.getUpperBound(index);
+	}
+
+	@Override
+	public Double getLowerBound(int index) {
+		return problem.getLowerBound(index);
+	}
+
+
 	private void createUtopia(int numberObjectives){
   	utopia = new ArrayList<>();
 		for (int i = 0; i < numberObjectives ; i++) {
