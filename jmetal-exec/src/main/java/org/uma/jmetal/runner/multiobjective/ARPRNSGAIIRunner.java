@@ -37,6 +37,9 @@ import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
+import org.uma.jmetal.util.fileoutput.SolutionListOutput;
+import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
+import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.referencePoint.ReferencePoint;
 import org.uma.jmetal.util.referencePoint.impl.IdealPoint;
 import org.uma.jmetal.util.referencePoint.impl.NadirPoint;
@@ -172,9 +175,9 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
         .setPopulationSize(100)
         .build() ;
     algorithm = new ARPBuilder<DoubleSolution>(problem, algorithmRun)
-        .setConsiderationProbability(0.7)
+        .setConsiderationProbability(0.3)
         .setMaxEvaluations(20)
-        .setTolerance(0.001)
+        .setTolerance(0.0001)
         .build();
 
     AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
@@ -185,13 +188,22 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
 
     JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
 
-    printFinalSolutionSet(population);
+   // printFinalSolutionSet(population);
+    new SolutionListOutput(population)
+        .setSeparator("\t")
+        .setVarFileOutputContext(new DefaultFileOutputContext("VAR_RNSGAII_DTLZ1_2.tsv"))
+        .setFunFileOutputContext(new DefaultFileOutputContext("FUN_RNSGAII_DTLZ1_2.tsv"))
+        .print();
+
+    JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
+    JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
+    JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
    // if (!referenceParetoFront.equals("")) {
    //   printQualityIndicators(population, referenceParetoFront) ;
   //  }
     System.out.println("Reference Points-----"+((ARP)algorithm).getReferencePoints().size());
-    writeLargerTextFile("ReferencePointRNSGAII_DTLZ2_6.txt",((ARP)algorithm).getReferencePoints());
-    writeLargerDoubleFile("DistancesRNSGAII_DTLZ2_6.txt",((ARP)algorithm).getDistances());
+    writeLargerTextFile("ReferencePointRNSGAII_DTLZ1_2.txt",((ARP)algorithm).getReferencePoints());
+    writeLargerDoubleFile("DistancesRNSGAII_DTLZ1_2.txt",((ARP)algorithm).getDistances());
 
   }
   private static List<Double> getReferencePoint(ReferencePoint referencePoint){

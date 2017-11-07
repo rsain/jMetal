@@ -39,6 +39,8 @@ public class ARPSingle<S extends Solution<?>> extends  AutomaticReferencePoint<S
   protected List<ReferencePoint> allReferencePoints;
   protected ReferencePoint currentReferencePoint;
   protected List<Double> distances;
+  protected List<Double> distancesRP;
+
   private S solutionRun =null;
   public ARPSingle(Problem<S> problem,
       InteractiveAlgorithm<S,S> algorithm,double considerationProbability,double tolerance,int maxEvaluations
@@ -55,6 +57,8 @@ public class ARPSingle<S extends Solution<?>> extends  AutomaticReferencePoint<S
     }
     this.allReferencePoints = new ArrayList<>();
     this.distances = new ArrayList<>();
+    this.distancesRP = new ArrayList<>();
+
   }
 
 
@@ -131,8 +135,11 @@ public class ARPSingle<S extends Solution<?>> extends  AutomaticReferencePoint<S
   @Override
   protected boolean isStoppingConditionReached() {
     boolean stop = evaluations >= maxEvaluations;
-    if(distances!=null){
-      stop = stop || distances.contains(0.0);
+    // if(distancesRP!=null){
+    //  stop = stop || distancesRP.contains(0.0);
+    // }
+    if(indexOfRelevantObjectiveFunctions!=null   ){
+      stop = stop || indexOfRelevantObjectiveFunctions.size()==numberOfObjectives;
     }
     return stop;
   }
@@ -187,8 +194,10 @@ public class ARPSingle<S extends Solution<?>> extends  AutomaticReferencePoint<S
     //if(solutionRun==null){
     //  solutionRun = solution;
     //}
-    if(solutionRun!=null)
-    calculateDistance(solutionRun,currentReferencePoint);
+    if(solutionRun!=null) {
+      calculateDistance(solutionRun, asp);//currentReferencePoint
+      calculateDistanceRP(solutionRun, currentReferencePoint);
+    }
     solutionRun =solution;
     //  if (indexOfRelevantObjectiveFunctions.size() == numberOfObjectives) {
     //    result.add(getReferencePointFromSolution(solution));
@@ -216,6 +225,13 @@ public class ARPSingle<S extends Solution<?>> extends  AutomaticReferencePoint<S
     double distance = euclideanDistance.compute(getPointFromSolution(solution),
         getPointFromReferencePoint(referencePoint));
     distances.add(distance);
+  }
+  private void calculateDistanceRP(S solution, ReferencePoint referencePoint){
+    EuclideanDistance euclideanDistance = new EuclideanDistance();
+
+    double distance = euclideanDistance.compute(getPointFromSolution(solution),
+        getPointFromReferencePoint(referencePoint));
+    distancesRP.add(distance);
   }
 
   @Override
