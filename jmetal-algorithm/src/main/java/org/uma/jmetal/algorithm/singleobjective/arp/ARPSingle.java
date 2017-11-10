@@ -108,6 +108,7 @@ public class ARPSingle<S extends Solution<?>> extends  AutomaticReferencePoint<S
     nadirObjectiveVector = new NadirPoint(numberOfObjectives);
 
     S solution = problem.createSolution();
+    problem.evaluate(solution);
     updateObjectiveVector(solution);
     asp = idealOjectiveVector;
     List<ReferencePoint> referencePoints  = new ArrayList<>();
