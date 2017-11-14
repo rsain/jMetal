@@ -45,6 +45,7 @@ import org.uma.jmetal.util.evaluator.impl.MultithreadedSolutionListEvaluator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
+import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.referencePoint.ReferencePoint;
 import org.uma.jmetal.util.referencePoint.impl.IdealPoint;
 import org.uma.jmetal.util.referencePoint.impl.NadirPoint;
@@ -78,7 +79,7 @@ public class ARPRDifferentialEvolutionaryRunner extends AbstractAlgorithmRunner 
 
 
 
-    problem =new DTLZ1(7,2);//ZDT1();//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
+    problem =new DTLZ4(7,2);//ZDT1();//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
 
     int numberOfCores ;
     if (args.length == 1) {
@@ -109,19 +110,26 @@ public class ARPRDifferentialEvolutionaryRunner extends AbstractAlgorithmRunner 
     double tolerance = 0.5;
 
     List<Double> referencePoint = new ArrayList<>() ;
-    referencePoint.add(0.0);
-    referencePoint.add(0.0);
+   // referencePoint.add(0.0);
+    //referencePoint.add(0.0);
     /*referencePoint.add(0.0);
     referencePoint.add(0.0);
     referencePoint.add(0.0);
     referencePoint.add(0.0);*/
+    List<Double> asp = new ArrayList<>();
+    for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+      asp.add(
+          JMetalRandom.getInstance().nextDouble(((AbstractDoubleProblem)problem).getLowerBound(i),((AbstractDoubleProblem)problem).getUpperBound(i)));
+      //asp.add(0.5);
+      referencePoint.add(0.0);//initialization
+    }
     double rho =0.05;
     problemRun = new ACH(referencePoint,(AbstractDoubleProblem)problem,rho);
     algorithmRun = new DifferentialEvolutionARPBuilder(problemRun)
         .setCrossover(crossover)
         .setSelection(selection)
         .setSolutionListEvaluator(evaluator)
-        .setMaxEvaluations(250000)
+        .setMaxEvaluations(200)
         .setPopulationSize(100)
         .build() ;
    /* algorithmRun = new RNSGAIIBuilder<DoubleSolution>(problem, crossover, mutation, referencePoint,epsilon)
@@ -132,9 +140,10 @@ public class ARPRDifferentialEvolutionaryRunner extends AbstractAlgorithmRunner 
 
     algorithm = new ARPSingleBuilder<DoubleSolution>(problemRun, algorithmRun)
         .setConsiderationProbability(0.3)
-        .setMaxEvaluations(20)
-        .setTolerance(0.001)
+        .setMaxEvaluations(11)
+        .setTolerance(0.0001)
         .setNumberOfObjectives(problem.getNumberOfObjectives())
+        .setAsp(asp)
         .build();
 
     AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
@@ -147,16 +156,16 @@ public class ARPRDifferentialEvolutionaryRunner extends AbstractAlgorithmRunner 
     population.add(solution) ;
     new SolutionListOutput(population)
         .setSeparator("\t")
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR_DE_DTLZ1_2.tsv"))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN_DE_DTLZ1_2.tsv"))
+        .setVarFileOutputContext(new DefaultFileOutputContext("VAR_DE_DTLZ4_2.tsv"))
+        .setFunFileOutputContext(new DefaultFileOutputContext("FUN_DE_DTLZ4_2.tsv"))
         .print();
 
     JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
     JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
     JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
     System.out.println("Reference Points-----"+((ARPSingle)algorithm).getReferencePoints().size());
-    writeLargerTextFile("ReferencePointsDE_DTLZ1_2.txt",((ARPSingle)algorithm).getReferencePoints());
-    writeLargerDoubleFile("DistancesDE_DTLZ1_2.txt",((ARPSingle)algorithm).getDistances());
+    writeLargerTextFile("ReferencePointsDE_DTLZ4_2.txt",((ARPSingle)algorithm).getReferencePoints());
+    writeLargerDoubleFile("DistancesDE_DTLZ4_2.txt",((ARPSingle)algorithm).getDistances());
     evaluator.shutdown();
   }
   private static List<Double> getReferencePoint(ReferencePoint referencePoint){

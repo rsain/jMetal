@@ -44,7 +44,7 @@ public class ARPSingle<S extends Solution<?>> extends  AutomaticReferencePoint<S
   private S solutionRun =null;
   public ARPSingle(Problem<S> problem,
       InteractiveAlgorithm<S,S> algorithm,double considerationProbability,double tolerance,int maxEvaluations
-  ,List<Double> rankingCoeficient,int numberOfObjectives) {
+  ,List<Double> rankingCoeficient,int numberOfObjectives,List<Double> asp) {
     super(problem, algorithm);
     this.considerationProbability = considerationProbability;
     this.tolerance = tolerance;
@@ -58,7 +58,14 @@ public class ARPSingle<S extends Solution<?>> extends  AutomaticReferencePoint<S
     this.allReferencePoints = new ArrayList<>();
     this.distances = new ArrayList<>();
     this.distancesRP = new ArrayList<>();
-
+    if(asp!=null){
+      this.asp= new IdealPoint(numberOfObjectives);
+      int i=0;
+      for (Double obj:asp) {
+        this.asp.setObjective(i,obj);
+        i++;
+      }
+    }
   }
 
 
@@ -98,7 +105,8 @@ public class ARPSingle<S extends Solution<?>> extends  AutomaticReferencePoint<S
         nadirObjectiveVector.setObjective(i,aux.getUpperBound(i).doubleValue());
       }
     }
-    asp = idealOjectiveVector;
+   if(asp!=null)
+     asp = idealOjectiveVector;
   }
 
   @Override

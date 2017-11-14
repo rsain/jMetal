@@ -18,6 +18,7 @@ import org.uma.jmetal.algorithm.InteractiveAlgorithm;
 import org.uma.jmetal.algorithm.multiobjective.arp.ARP;
 import org.uma.jmetal.algorithm.multiobjective.arp.ARPBuilder;
 import org.uma.jmetal.algorithm.multiobjective.rnsgaii.RNSGAIIBuilder;
+import org.uma.jmetal.algorithm.multiobjective.wasfga.WASFGA;
 import org.uma.jmetal.algorithm.singleobjective.arp.ARPSingle;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
@@ -26,6 +27,7 @@ import org.uma.jmetal.operator.impl.crossover.SBXCrossover;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
@@ -37,6 +39,7 @@ import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
+import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
@@ -86,7 +89,7 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
       referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf" ;
     }
 
-    problem =new DTLZ2(7,6);//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
+    problem =new DTLZ1(7,2);//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
 
     double crossoverProbability = 0.9 ;
     double crossoverDistributionIndex = 20.0 ;
@@ -111,12 +114,7 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
     double tolerance = 0.5;
 
     List<Double> referencePoint = new ArrayList<>() ;
-    referencePoint.add(0.0);
-    referencePoint.add(0.0);
-    referencePoint.add(0.0);
-    referencePoint.add(0.0);
-    referencePoint.add(0.0);
-    referencePoint.add(0.0);
+
     /*referencePoint.add(0.0) ;
     referencePoint.add(1.0) ;
     referencePoint.add(1.0) ;
@@ -167,17 +165,26 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
     //referencePoint.add(0.8);
 
     double epsilon= 0.0045;
+    List<Double> asp = new ArrayList<>();
+    for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+      asp.add(JMetalRandom.getInstance().nextDouble(((AbstractDoubleProblem)problem).getLowerBound(i),((AbstractDoubleProblem)problem).getUpperBound(i)));
+      //asp.add(0.5);
+      referencePoint.add(0.0);//initialization
+    }
 
-
-    algorithmRun = new RNSGAIIBuilder<DoubleSolution>(problem, crossover, mutation, referencePoint,epsilon)
+    /*algorithmRun = new RNSGAIIBuilder<DoubleSolution>(problem, crossover, mutation, referencePoint,epsilon)
         .setSelectionOperator(selection)
-        .setMaxEvaluations(25000)
+        .setMaxEvaluations(200000)
         .setPopulationSize(100)
-        .build() ;
+        .build() ;*/
+    algorithmRun =  new WASFGA<DoubleSolution>(problem, 100, 200, crossover, mutation,
+        selection,new SequentialSolutionListEvaluator<DoubleSolution>(),referencePoint) ;
+
     algorithm = new ARPBuilder<DoubleSolution>(problem, algorithmRun)
         .setConsiderationProbability(0.3)
-        .setMaxEvaluations(20)
-        .setTolerance(0.0001)
+        .setMaxEvaluations(11)
+        .setTolerance(0.001)
+        .setAsp(asp)
         .build();
 
     AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)

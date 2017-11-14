@@ -22,6 +22,7 @@ public class ARPSingleBuilder<S extends Solution<?>> implements AlgorithmBuilder
   private double tolerance;
   private List<Double> rankingCoeficient;
   private int numberOfObjectives;
+  private List<Double> asp;
   /**
    * ARPBuilder constructor
    */
@@ -40,6 +41,10 @@ public class ARPSingleBuilder<S extends Solution<?>> implements AlgorithmBuilder
     return this;
   }
 
+  public ARPSingleBuilder<S>  setAsp(List<Double> asp) {
+    this.asp = asp;
+    return this;
+  }
 
   public ARPSingleBuilder<S> setAlgorithm(InteractiveAlgorithm<S,S> algorithm) {
     if (algorithm==null) {
@@ -73,7 +78,7 @@ public class ARPSingleBuilder<S extends Solution<?>> implements AlgorithmBuilder
   public ARPSingle<S> build() {
     ARPSingle<S> algorithmRun = null ;
     algorithmRun = new ARPSingle<S>(problem,algorithm,considerationProbability,tolerance, maxEvaluations,
-          rankingCoeficient, numberOfObjectives);
+          rankingCoeficient, numberOfObjectives,asp);
 
     return algorithmRun ;
   }

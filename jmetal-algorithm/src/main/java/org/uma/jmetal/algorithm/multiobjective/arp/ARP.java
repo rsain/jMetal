@@ -1,6 +1,7 @@
 package org.uma.jmetal.algorithm.multiobjective.arp;
 
 import org.uma.jmetal.algorithm.InteractiveAlgorithm;
+import org.uma.jmetal.algorithm.multiobjective.mombi.util.ASFWASFGA;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.impl.AbstractBinaryProblem;
 import org.uma.jmetal.problem.impl.AbstractDoubleProblem;
@@ -14,6 +15,7 @@ import org.uma.jmetal.util.point.Point;
 import org.uma.jmetal.util.point.impl.ArrayPoint;
 import org.uma.jmetal.util.point.util.distance.EuclideanDistance;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
+import org.uma.jmetal.util.referencePoint.AchievementScalarizingFunction;
 import org.uma.jmetal.util.referencePoint.ReferencePoint;
 import org.uma.jmetal.util.referencePoint.impl.IdealPoint;
 import org.uma.jmetal.util.referencePoint.impl.NadirPoint;
@@ -42,7 +44,7 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
   private S solutionRun=null;
   public ARP(Problem<S> problem,
       InteractiveAlgorithm<S,List<S>> algorithm,double considerationProbability,double tolerance,int maxEvaluations
-  ,List<Double> rankingCoeficient,int numberReferencePoints) {
+  ,List<Double> rankingCoeficient,int numberReferencePoints,List<Double> asp) {
     super(problem, algorithm);
     this.considerationProbability = considerationProbability;
     this.tolerance = tolerance;
@@ -57,6 +59,14 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
     this.allReferencePoints = new ArrayList<>();
     this.distances = new ArrayList<>();
     this.distancesRP = new ArrayList<>();
+    if(asp!=null){
+      this.asp= new IdealPoint(numberOfObjectives);
+      int i=0;
+      for (Double obj:asp) {
+        this.asp.setObjective(i,obj);
+        i++;
+      }
+    }
   }
 
 
@@ -94,7 +104,8 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
         nadirObjectiveVector.setObjective(i,aux.getUpperBound(i).doubleValue());
       }
     }
-    asp = idealOjectiveVector;
+    if(asp==null)
+      asp = idealOjectiveVector;
   }
 
   @Override
@@ -109,7 +120,6 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
     solutions.add(sol);
     updateObjectiveVector(solutions);
    // solutionRun = solutions.get(0);
-    asp = idealOjectiveVector;
     List<ReferencePoint> referencePoints  = new ArrayList<>();
     for (int i=0;i < numberReferencePoints;i++){
       ReferencePoint referencePoint = new IdealPoint(numberOfObjectives);
@@ -301,5 +311,40 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
       result.setDimensionValue(i, referencePoint.getObjective(i));
     }
     return result;
+  }
+  private S referencePointToSolution(ReferencePoint referencePoint){
+   S result = problem.createSolution();
+    for (int i = 0; i < referencePoint.getNumberOfObjectives(); i++) {
+      result.setObjective(i,referencePoint.getObjective(i));
+    }
+    return result;
+  }
+
+  public S getProjection(ReferencePoint referencePoint) {
+    S solution = problem.createSolution();
+   double [] [] weights = new double[1][rankingCoeficient.size()];
+   int i=0;
+    for (Double ranking:rankingCoeficient) {
+      weights[0][i]= ranking;
+      i++;
+    }
+    List<Double> interestPoint = new ArrayList<>();
+
+    for (int j = 0; j < referencePoint.getNumberOfObjectives(); j++) {
+      interestPoint.add(referencePoint.getObjective(j));
+    }
+    List<Double> nadir = new ArrayList<>();
+    for (int j = 0; j < nadirObjectiveVector.getNumberOfObjectives(); j++) {
+      nadir.add(nadirObjectiveVector.getObjective(j));
+    }
+    List<Double> utopia = new ArrayList<>();
+    for (int j = 0; j <idealOjectiveVector.getNumberOfObjectives() ; j++) {
+      utopia.add(idealOjectiveVector.getObjective(j));
+    }
+    ASFWASFGA<S> asf = new ASFWASFGA<S>(weights, interestPoint);
+    asf.setNadir(nadir);
+    asf.setUtopia(utopia);
+    solution.setObjective(0,asf.evaluate(referencePointToSolution(asp),0));
+    return solution;
   }
 }

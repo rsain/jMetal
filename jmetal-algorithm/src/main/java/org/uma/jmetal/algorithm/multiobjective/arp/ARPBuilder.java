@@ -1,6 +1,7 @@
 package org.uma.jmetal.algorithm.multiobjective.arp;
 
 import org.uma.jmetal.algorithm.InteractiveAlgorithm;
+import org.uma.jmetal.algorithm.multiobjective.nsgaiii.util.ReferencePoint;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.AlgorithmBuilder;
@@ -23,6 +24,7 @@ public class ARPBuilder<S extends Solution<?>> implements AlgorithmBuilder<ARP<S
   private double tolerance;
   private List<Double> rankingCoeficient;
   private int numberReferencePoints;
+  private List<Double> asp;
   /**
    * ARPBuilder constructor
    */
@@ -42,6 +44,10 @@ public class ARPBuilder<S extends Solution<?>> implements AlgorithmBuilder<ARP<S
     return this;
   }
 
+  public ARPBuilder<S>  setAsp(List<Double> asp) {
+    this.asp = asp;
+    return this;
+  }
 
   public ARPBuilder<S> setAlgorithm(InteractiveAlgorithm<S,List<S>> algorithm) {
     if (algorithm==null) {
@@ -75,7 +81,7 @@ public class ARPBuilder<S extends Solution<?>> implements AlgorithmBuilder<ARP<S
   public ARP<S> build() {
     ARP<S> algorithmRun = null ;
     algorithmRun = new ARP<S>(problem,algorithm,considerationProbability,tolerance, maxEvaluations,
-          rankingCoeficient,numberReferencePoints);
+          rankingCoeficient,numberReferencePoints,asp);
 
     return algorithmRun ;
   }
