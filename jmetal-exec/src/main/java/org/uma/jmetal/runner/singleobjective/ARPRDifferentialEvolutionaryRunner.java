@@ -151,21 +151,22 @@ public class ARPRDifferentialEvolutionaryRunner extends AbstractAlgorithmRunner 
 
     DoubleSolution solution = algorithm.getResult() ;
     long computingTime = algorithmRunner.getComputingTime() ;
+    String name ="_RNSGAII_DTLZ1_2";
 
     List<DoubleSolution> population = new ArrayList<>(1) ;
     population.add(solution) ;
     new SolutionListOutput(population)
         .setSeparator("\t")
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR_DE_DTLZ4_2.tsv"))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN_DE_DTLZ4_2.tsv"))
+        .setVarFileOutputContext(new DefaultFileOutputContext("VAR"+name+".tsv"))
+        .setFunFileOutputContext(new DefaultFileOutputContext("FUN"+name+".tsv"))
         .print();
 
     JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
     JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
     JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
     System.out.println("Reference Points-----"+((ARPSingle)algorithm).getReferencePoints().size());
-    writeLargerTextFile("ReferencePointsDE_DTLZ4_2.txt",((ARPSingle)algorithm).getReferencePoints());
-    writeLargerDoubleFile("DistancesDE_DTLZ4_2.txt",((ARPSingle)algorithm).getDistances());
+    writeLargerTextFile("ReferencePoint"+name+".txt",((ARPSingle)algorithm).getReferencePoints());
+    writeLargerDoubleFile("Distances"+name+".txt",((ARPSingle)algorithm).getDistances());
     evaluator.shutdown();
   }
   private static List<Double> getReferencePoint(ReferencePoint referencePoint){
