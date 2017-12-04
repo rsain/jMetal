@@ -1,5 +1,6 @@
 package org.uma.jmetal.algorithm.singleobjective.differentialevolution;
 
+import java.util.List;
 import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
 import org.uma.jmetal.operator.impl.selection.DifferentialEvolutionSelection;
 import org.uma.jmetal.problem.DoubleProblem;
@@ -19,6 +20,7 @@ public class DifferentialEvolutionBuilder {
   private DifferentialEvolutionCrossover crossoverOperator;
   private DifferentialEvolutionSelection selectionOperator;
   private SolutionListEvaluator<DoubleSolution> evaluator;
+  private List<DoubleSolution> initialPopulation;
 
   public DifferentialEvolutionBuilder(DoubleProblem problem) {
     this.problem = problem;
@@ -67,9 +69,20 @@ public class DifferentialEvolutionBuilder {
     return this;
   }
 
+  public DifferentialEvolutionBuilder setInitialPopulation(
+      List<DoubleSolution> initialPopulation) {
+    this.initialPopulation = initialPopulation;
+    return this;
+  }
+
   public DifferentialEvolution build() {
-    return new DifferentialEvolution(problem, maxEvaluations, populationSize, crossoverOperator,
-        selectionOperator, evaluator);
+    if(initialPopulation!=null){
+      return new DifferentialEvolution(problem, maxEvaluations, populationSize, crossoverOperator,
+          selectionOperator, evaluator,initialPopulation);
+    }else {
+      return new DifferentialEvolution(problem, maxEvaluations, populationSize, crossoverOperator,
+          selectionOperator, evaluator);
+    }
   }
 
   /* Getters */

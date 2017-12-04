@@ -25,6 +25,7 @@ public class DifferentialEvolution extends AbstractDifferentialEvolution<DoubleS
   private Comparator<DoubleSolution> comparator;
 
   private int evaluations;
+  private List<DoubleSolution> pop = null;
 
   /**
    * Constructor
@@ -47,6 +48,12 @@ public class DifferentialEvolution extends AbstractDifferentialEvolution<DoubleS
     this.evaluator = evaluator;
 
     comparator = new ObjectiveComparator<DoubleSolution>(0);
+  }
+  public DifferentialEvolution(DoubleProblem problem, int maxEvaluations, int populationSize,
+      DifferentialEvolutionCrossover crossoverOperator,
+      DifferentialEvolutionSelection selectionOperator, SolutionListEvaluator<DoubleSolution> evaluator,List<DoubleSolution> population) {
+   this(problem,maxEvaluations,populationSize,crossoverOperator,selectionOperator,evaluator);
+   this.pop= population;
   }
   
   public int getEvaluations() {
@@ -71,9 +78,13 @@ public class DifferentialEvolution extends AbstractDifferentialEvolution<DoubleS
 
   @Override protected List<DoubleSolution> createInitialPopulation() {
     List<DoubleSolution> population = new ArrayList<>(populationSize);
-    for (int i = 0; i < populationSize; i++) {
-      DoubleSolution newIndividual = getProblem().createSolution();
-      population.add(newIndividual);
+    if(pop!=null){
+      population = new ArrayList<DoubleSolution>(pop);
+    }else {
+      for (int i = 0; i < populationSize; i++) {
+        DoubleSolution newIndividual = getProblem().createSolution();
+        population.add(newIndividual);
+      }
     }
     return population;
   }

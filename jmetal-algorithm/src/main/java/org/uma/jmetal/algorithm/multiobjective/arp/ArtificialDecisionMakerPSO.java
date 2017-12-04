@@ -2,7 +2,11 @@ package org.uma.jmetal.algorithm.multiobjective.arp;
 
 import org.uma.jmetal.algorithm.InteractiveAlgorithm;
 import org.uma.jmetal.algorithm.multiobjective.mombi.util.ASFWASFGA;
+import org.uma.jmetal.algorithm.singleobjective.differentialevolution.DifferentialEvolution;
+import org.uma.jmetal.algorithm.singleobjective.differentialevolution.DifferentialEvolutionBuilder;
 import org.uma.jmetal.algorithm.singleobjective.particleswarmoptimization.StandardPSO;
+import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
+import org.uma.jmetal.operator.impl.selection.DifferentialEvolutionSelection;
 import org.uma.jmetal.problem.DoubleProblem;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.impl.AbstractDoubleProblem;
@@ -48,13 +52,14 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
   private ReferencePointProblem rfProblem;
   private SolutionListEvaluator<DoubleSolution> evaluator;
   private DoubleProblem auxProblem;
+  private List<DoubleSolution> prueba;
   public ArtificialDecisionMakerPSO(Problem<S> problem,
       InteractiveAlgorithm<S, List<S>> algorithm,double considerationProbability,double tolerance,int maxEvaluations
       ,List<Double> rankingCoeficient,int numberReferencePoints,List<Double> asp,SolutionListEvaluator<DoubleSolution> evaluator) {
     super(problem, algorithm);
     //crear pso monoobjectivo
     //el pso se crea cuando se le pasa el frente
-    auxProblem = new DTLZ1(problem.getNumberOfVariables(),problem.getNumberOfObjectives());
+    auxProblem = new DTLZ1(problem.getNumberOfObjectives(),problem.getNumberOfObjectives());
     this.rfProblem = new ReferencePointProblem(asp,auxProblem);
     this.considerationProbability = considerationProbability;
     this.tolerance = tolerance;
@@ -79,6 +84,7 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
         i++;
       }
     }
+    prueba = new ArrayList<>();
   }
   private  void  initialiceRankingCoeficient(){
     rankingCoeficient = new ArrayList<>();
@@ -154,9 +160,9 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
     // if(distancesRP!=null){
     //  stop = stop || distancesRP.contains(0.0);
     // }
-    if(indexOfRelevantObjectiveFunctions!=null   ){
-      stop = stop || indexOfRelevantObjectiveFunctions.size()==numberOfObjectives;
-    }
+    //if(indexOfRelevantObjectiveFunctions!=null   ){
+    //  stop = stop || indexOfRelevantObjectiveFunctions.size()==numberOfObjectives;
+    //}
     return stop;
   }
 
@@ -222,12 +228,32 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
     List<S> temporal = new ArrayList<>(front);
     List<DoubleSolution> swarm = createSwarm(front);
     //10 + (int) (2 * Math.sqrt(rfProblem.getNumberOfVariables()))
+    int numPart =3;
+    if(swarm.size()<=numPart){
+      numPart =swarm.size()-1;
+    }
     pso = new StandardPSO(rfProblem,
         swarm.size(),
-        80000, 3, evaluator,swarm,aspList);
+        80000, numPart, evaluator,swarm,aspList);
 
      pso.run();
-     DoubleSolution psoSolution = pso.getResult();
+         DoubleSolution psoSolution = pso.getResult();
+         prueba.add(psoSolution);
+
+   /* DifferentialEvolutionSelection selection;
+    DifferentialEvolutionCrossover crossover;
+    crossover = new DifferentialEvolutionCrossover(0.5, 0.5, "rand/1/bin") ;
+    selection = new DifferentialEvolutionSelection();
+
+    DifferentialEvolution de = new DifferentialEvolutionBuilder(rfProblem)
+        .setCrossover(crossover)
+        .setSelection(selection)
+        .setSolutionListEvaluator(evaluator)
+        .setMaxEvaluations(250000)
+        .setPopulationSize(100).setInitialPopulation(swarm)
+        .build() ;
+    de.run();
+     DoubleSolution psoSolution = de.getResult();*/
     for(int numRefPoint=0;numRefPoint<numberReferencePoints;numRefPoint++){
       if(solutionRun!=null) {
         calculateDistance(solutionRun, asp);
@@ -242,12 +268,22 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
       ReferencePoint referencePoint = new IdealPoint(numberOfObjectives);
       for (int i = 0; i < referencePoint.getNumberOfObjectives(); i++) {
         if (indexOfRelevantObjectiveFunctions.contains(i)) {
-          referencePoint.setObjective(i,
+          //referencePoint.setObjective(i,asp.getObjective(i) - (asp.getObjective(i) - solution.getObjective(i)) / 2);
+
+         referencePoint.setObjective(i,
               psoSolution.getVariableValue(i));
-          //asp.getObjective(i) - (asp.getObjective(i) - solution.getObjective(i)) / 2
         } else {
           //predict the i position of reference point
-          referencePoint.setObjective(i, prediction(i,paretoOptimalSolutions,solution));
+          //coger el mas cercano entre
+          //double pred =prediction(i,paretoOptimalSolutions,solution);
+          //double cal= asp.getObjective(i) - (asp.getObjective(i) - solution.getObjective(i)) / 2;
+          //referencePoint.setObjective(i, Math.abs(pred-asp.getObjective(i)) <= Math.abs(cal-asp.getObjective(i)) ? pred : cal);
+           referencePoint.setObjective(i, prediction(i,paretoOptimalSolutions,solution));
+          //referencePoint.setObjective(i, predictionDouble(i,prueba,psoSolution));
+        //  referencePoint.setObjective(i,asp.getObjective(i) - (asp.getObjective(i) - solution.getObjective(i)) / 2);
+          //referencePoint.setObjective(i,asp.getObjective(i) - (asp.getObjective(i) - psoSolution.getVariableValue(i)) / 2);
+          //referencePoint.setObjective(i,
+           //   psoSolution.getVariableValue(i));
         }
       }
       result.add(referencePoint);
@@ -298,6 +334,14 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
     DecisionTreeEstimator<S> dte = new DecisionTreeEstimator<S>(paretoOptimalSolutions);
 
     double data=dte.doPrediction(index,solution);
+    return data;//currentReferencePoint.getObjective(index);
+  }
+  private double predictionDouble(int index,List<DoubleSolution> paretoOptimalSolutions,
+      DoubleSolution solution) {
+    //FALTA PREDICTION
+    DecisionTreeEstimator<DoubleSolution> dte = new DecisionTreeEstimator<DoubleSolution>(prueba);
+
+    double data=dte.doPredictionVariable(index,solution);
     return data;//currentReferencePoint.getObjective(index);
   }
   @Override

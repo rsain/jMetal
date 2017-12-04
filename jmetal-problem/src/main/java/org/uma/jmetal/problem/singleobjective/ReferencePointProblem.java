@@ -35,13 +35,13 @@ public class ReferencePointProblem extends AbstractDoubleProblem {
     List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables()) ;
     List<Double> upperLimit = new ArrayList<>(getNumberOfVariables()) ;
 
-    Collections.sort(asp);
+    //Collections.sort(asp);
     solutionAsp = problem.createSolution();//problem.createSolution();
     for (int i = 0; i < getNumberOfVariables(); i++) {
       solutionAsp.setObjective(i,asp.get(i));
       solutionAsp.setVariableValue(i,asp.get(i));
-      lowerLimit.add(asp.get(0));
-      upperLimit.add(asp.get(asp.size()-1));
+      lowerLimit.add(Collections.min(asp));
+      upperLimit.add(Collections.max(asp));
     }
 
     setLowerLimit(lowerLimit);

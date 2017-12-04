@@ -143,9 +143,9 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
    // if(distancesRP!=null){
     //  stop = stop || distancesRP.contains(0.0);
    // }
-    if(indexOfRelevantObjectiveFunctions!=null   ){
-      stop = stop || indexOfRelevantObjectiveFunctions.size()==numberOfObjectives;
-    }
+   // if(indexOfRelevantObjectiveFunctions!=null   ){
+    //  stop = stop || indexOfRelevantObjectiveFunctions.size()==numberOfObjectives;
+    //}
     return stop;
   }
 

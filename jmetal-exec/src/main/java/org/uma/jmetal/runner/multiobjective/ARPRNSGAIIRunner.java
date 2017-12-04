@@ -89,8 +89,8 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
       referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf" ;
     }
 
-    problem =new DTLZ1(7,2);//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
-
+    //problem =new DTLZ1(7,2);//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
+problem = new ZDT1();
     double crossoverProbability = 0.9 ;
     double crossoverDistributionIndex = 20.0 ;
     crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex) ;
@@ -113,7 +113,8 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
     }
     double tolerance = 0.5;
 
-    List<Double> referencePoint = new ArrayList<>() ;
+    //for(int cont=0;cont<11;cont++) {
+      List<Double> referencePoint = new ArrayList<>();
 
     /*referencePoint.add(0.0) ;
     referencePoint.add(1.0) ;
@@ -125,14 +126,14 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
     referencePoint.add(0.8) ;
     referencePoint.add(0.8) ;
     referencePoint.add(0.2) ;*/
-    //Example fig 2 paper Deb
-   // referencePoint.add(0.2) ;
-    //referencePoint.add(0.4) ;
-    //referencePoint.add(0.8) ;
-    //referencePoint.add(0.4) ;
-    //referencePoint.add(0.0) ;
-    //referencePoint.add(0.0) ;
-    //Example fig 3 paper Deb
+      //Example fig 2 paper Deb
+      // referencePoint.add(0.2) ;
+      //referencePoint.add(0.4) ;
+      //referencePoint.add(0.8) ;
+      //referencePoint.add(0.4) ;
+      //referencePoint.add(0.0) ;
+      //referencePoint.add(0.0) ;
+      //Example fig 3 paper Deb
    /* referencePoint.add(0.1) ;
     referencePoint.add(0.6) ;
 
@@ -156,62 +157,65 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
     referencePoint.add(0.8);
     referencePoint.add(0.8) ;
     referencePoint.add(0.6) ;*/
-    //referencePoint.add(0.0) ;
-    //referencePoint.add(1.0);
+      //referencePoint.add(0.0) ;
+      //referencePoint.add(1.0);
 
-    //referencePoint.add(1.0) ;
-    //referencePoint.add(1.0);
-    //referencePoint.add(0.4) ;
-    //referencePoint.add(0.8);
+      //referencePoint.add(1.0) ;
+      //referencePoint.add(1.0);
+      //referencePoint.add(0.4) ;
+      //referencePoint.add(0.8);
 
-    double epsilon= 0.0045;
-    List<Double> asp = new ArrayList<>();
-    for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
-      asp.add(JMetalRandom.getInstance().nextDouble(((AbstractDoubleProblem)problem).getLowerBound(i),((AbstractDoubleProblem)problem).getUpperBound(i)));
-      //asp.add(0.5);
-      referencePoint.add(0.0);//initialization
-    }
+      double epsilon = 0.0045;
+      List<Double> asp = new ArrayList<>();
+      for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+        //asp.add(JMetalRandom.getInstance().nextDouble(((AbstractDoubleProblem)problem).getLowerBound(i),((AbstractDoubleProblem)problem).getUpperBound(i)));
+        //asp.add(0.5);
+        referencePoint.add(0.0);//initialization
+      }
 
-    algorithmRun = new RNSGAIIBuilder<DoubleSolution>(problem, crossover, mutation, referencePoint,epsilon)
-        .setSelectionOperator(selection)
-        .setMaxEvaluations(20000)
-        .setPopulationSize(100)
-        .build() ;
-   // algorithmRun =  new WASFGA<DoubleSolution>(problem, 100, 200, crossover, mutation,
-   //     selection,new SequentialSolutionListEvaluator<DoubleSolution>(),referencePoint) ;
+      asp.add(0.0);//x 0
+      asp.add(0.0);//y 1
+      algorithmRun = new RNSGAIIBuilder<DoubleSolution>(problem, crossover, mutation,
+          referencePoint, epsilon)
+          .setSelectionOperator(selection)
+          .setMaxEvaluations(20000)
+          .setPopulationSize(100)
+          .build();
+     //  algorithmRun =  new WASFGA<DoubleSolution>(problem, 100, 200, crossover, mutation,
+      //     selection,new SequentialSolutionListEvaluator<DoubleSolution>(),referencePoint) ;
 
-    algorithm = new ARPBuilder<DoubleSolution>(problem, algorithmRun)
-        .setConsiderationProbability(0.3)
-        .setMaxEvaluations(11)
-        .setTolerance(0.001)
-        .setAsp(asp)
-        .build();
+      algorithm = new ARPBuilder<DoubleSolution>(problem, algorithmRun)
+          .setConsiderationProbability(0.5)
+          .setMaxEvaluations(11)
+          .setTolerance(0.001)
+          .setAsp(asp)
+          .build();
 
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-        .execute() ;
+      AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
+          .execute();
 
-    List<DoubleSolution> population = algorithm.getResult() ;
-    long computingTime = algorithmRunner.getComputingTime() ;
+      List<DoubleSolution> population = algorithm.getResult();
+      long computingTime = algorithmRunner.getComputingTime();
 
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-    String name ="_RNSGAII_DTLZ1_2";
-   // printFinalSolutionSet(population);
-    new SolutionListOutput(population)
-        .setSeparator("\t")
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR"+name+".tsv"))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN"+name+".tsv"))
-        .print();
+      JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+      String name = "_RNSGAII_ZDT1_ant_0_0";//+"_"+cont;
+      // printFinalSolutionSet(population);
+      new SolutionListOutput(population)
+          .setSeparator("\t")
+          .setVarFileOutputContext(new DefaultFileOutputContext("VAR" + name + ".tsv"))
+          .setFunFileOutputContext(new DefaultFileOutputContext("FUN" + name + ".tsv"))
+          .print();
 
-    JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
-    JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
-    JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
-   // if (!referenceParetoFront.equals("")) {
-   //   printQualityIndicators(population, referenceParetoFront) ;
-  //  }
-    System.out.println("Reference Points-----"+((ARP)algorithm).getReferencePoints().size());
-    writeLargerTextFile("ReferencePoint"+name+".txt",((ARP)algorithm).getReferencePoints());
-    writeLargerDoubleFile("Distances"+name+".txt",((ARP)algorithm).getDistances());
-
+      JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
+      JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
+      JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
+      // if (!referenceParetoFront.equals("")) {
+      //   printQualityIndicators(population, referenceParetoFront) ;
+      //  }
+      System.out.println("Reference Points-----" + ((ARP) algorithm).getReferencePoints().size());
+      writeLargerTextFile("ReferencePoint" + name + ".txt", ((ARP) algorithm).getReferencePoints());
+      writeLargerDoubleFile("Distances" + name + ".txt", ((ARP) algorithm).getDistances());
+    //}//for borrar
   }
   private static List<Double> getReferencePoint(ReferencePoint referencePoint){
     List<Double> result = new ArrayList<>();
