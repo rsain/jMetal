@@ -232,28 +232,33 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
     if(swarm.size()<=numPart){
       numPart =swarm.size()-1;
     }
-    pso = new StandardPSO(rfProblem,
+   /* pso = new StandardPSO(rfProblem,
         swarm.size(),
         80000, numPart, evaluator,swarm,aspList);
 
      pso.run();
          DoubleSolution psoSolution = pso.getResult();
-         prueba.add(psoSolution);
+         prueba.add(psoSolution);*/
 
-   /* DifferentialEvolutionSelection selection;
+    DifferentialEvolutionSelection selection;
     DifferentialEvolutionCrossover crossover;
     crossover = new DifferentialEvolutionCrossover(0.5, 0.5, "rand/1/bin") ;
     selection = new DifferentialEvolutionSelection();
 
+    if(swarm.size()<=4){
+      while (swarm.size()<100 ) {
+        swarm.addAll(createSwarm(front));
+      }
+    }
     DifferentialEvolution de = new DifferentialEvolutionBuilder(rfProblem)
         .setCrossover(crossover)
         .setSelection(selection)
         .setSolutionListEvaluator(evaluator)
         .setMaxEvaluations(250000)
-        .setPopulationSize(100).setInitialPopulation(swarm)
+        .setPopulationSize(swarm.size()).setInitialPopulation(swarm)
         .build() ;
     de.run();
-     DoubleSolution psoSolution = de.getResult();*/
+     DoubleSolution psoSolution = de.getResult();
     for(int numRefPoint=0;numRefPoint<numberReferencePoints;numRefPoint++){
       if(solutionRun!=null) {
         calculateDistance(solutionRun, asp);
