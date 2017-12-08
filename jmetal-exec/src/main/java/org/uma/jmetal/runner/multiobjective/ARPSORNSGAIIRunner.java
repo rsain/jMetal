@@ -37,6 +37,9 @@ import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ4;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.runner.AbstractAlgorithmRunner;
 import org.uma.jmetal.solution.DoubleSolution;
@@ -86,8 +89,8 @@ public class ARPSORNSGAIIRunner extends AbstractAlgorithmRunner {
       referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf" ;
     }
 
-   // problem =new DTLZ1(7,2);//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
-    problem = new ZDT1();
+    problem =new DTLZ4(7,2);//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
+   // problem = new ZDT1();
     double crossoverProbability = 0.9 ;
     double crossoverDistributionIndex = 20.0 ;
     crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex) ;
@@ -110,7 +113,7 @@ public class ARPSORNSGAIIRunner extends AbstractAlgorithmRunner {
     }
     double tolerance = 0.0;
 
-    //for (int cont = 0; cont < 11 ; cont++) {
+    for (int cont = 0; cont < 11 ; cont++) {
 
       List<Double> referencePoint = new ArrayList<>();
 
@@ -176,13 +179,13 @@ public class ARPSORNSGAIIRunner extends AbstractAlgorithmRunner {
       //asp.add(0.8);
       asp.add(0.0);//x
       asp.add(0.0);//y
-       algorithmRun = new RNSGAIIBuilder<DoubleSolution>(problem, crossover, mutation, referencePoint,epsilon)
-           .setSelectionOperator(selection)
+      algorithmRun = new RNSGAIIBuilder<DoubleSolution>(problem, crossover, mutation, referencePoint,epsilon)
+          .setSelectionOperator(selection)
            .setMaxEvaluations(20000)
-           .setPopulationSize(100)
+          .setPopulationSize(100)
           .build() ;
-      //algorithmRun = new WASFGA<DoubleSolution>(problem, 100, 200, crossover, mutation,
-       //   selection, new SequentialSolutionListEvaluator<DoubleSolution>(), referencePoint);
+     // algorithmRun = new WASFGA<DoubleSolution>(problem, 100, 200, crossover, mutation,
+      //  selection, new SequentialSolutionListEvaluator<DoubleSolution>(), referencePoint);
 
       algorithm = new ArtificialDecisionMakerPSOBuilder<DoubleSolution>(problem, algorithmRun)
           .setConsiderationProbability(0.5)//0.3
@@ -197,8 +200,8 @@ public class ARPSORNSGAIIRunner extends AbstractAlgorithmRunner {
       List<DoubleSolution> population = algorithm.getResult();
       long computingTime = algorithmRunner.getComputingTime();
 
-      JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-      String name = "_PSO_RNSGAII_ZDT1_0_0";
+      JMetalLogger.logger.info("Total execution time: " + computingTime + "ms" + " cont " +cont);
+      String name = "_PSO_RNSGAII_DTLZ4_0_0_"+cont;
       // printFinalSolutionSet(population);
       new SolutionListOutput(population)
           .setSeparator("\t")
@@ -219,7 +222,7 @@ public class ARPSORNSGAIIRunner extends AbstractAlgorithmRunner {
           ((ArtificialDecisionMakerPSO) algorithm).getReferencePoints());
       writeLargerDoubleFile("Distances" + name + ".txt",
           ((ArtificialDecisionMakerPSO) algorithm).getDistances());
-   // }//for cont ejecuciones
+   }//for cont ejecuciones
   }
   private static List<Double> getReferencePoint(ReferencePoint referencePoint){
     List<Double> result = new ArrayList<>();
@@ -239,7 +242,7 @@ public class ARPSORNSGAIIRunner extends AbstractAlgorithmRunner {
           line += list.get(i).getObjective(j) + " ";
         }
         line = line.substring(0,line.lastIndexOf(" "));
-        i+=2;
+        i++;
         writer.write(line);
         writer.newLine();
       }

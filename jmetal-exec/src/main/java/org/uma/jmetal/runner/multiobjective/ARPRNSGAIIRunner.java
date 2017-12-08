@@ -89,8 +89,8 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
       referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf" ;
     }
 
-    //problem =new DTLZ1(7,2);//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
-problem = new ZDT1();
+    problem =new DTLZ3(7,2);//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
+//problem = new ZDT1();
     double crossoverProbability = 0.9 ;
     double crossoverDistributionIndex = 20.0 ;
     crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex) ;
@@ -113,7 +113,7 @@ problem = new ZDT1();
     }
     double tolerance = 0.5;
 
-    //for(int cont=0;cont<11;cont++) {
+    for(int cont=0;cont<11;cont++) {
       List<Double> referencePoint = new ArrayList<>();
 
     /*referencePoint.add(0.0) ;
@@ -179,10 +179,10 @@ problem = new ZDT1();
           referencePoint, epsilon)
           .setSelectionOperator(selection)
           .setMaxEvaluations(20000)
-          .setPopulationSize(100)
-          .build();
-     //  algorithmRun =  new WASFGA<DoubleSolution>(problem, 100, 200, crossover, mutation,
-      //     selection,new SequentialSolutionListEvaluator<DoubleSolution>(),referencePoint) ;
+         .setPopulationSize(100)
+         .build();
+      //algorithmRun =  new WASFGA<DoubleSolution>(problem, 100, 200, crossover, mutation,
+       //    selection,new SequentialSolutionListEvaluator<DoubleSolution>(),referencePoint) ;
 
       algorithm = new ARPBuilder<DoubleSolution>(problem, algorithmRun)
           .setConsiderationProbability(0.5)
@@ -197,8 +197,8 @@ problem = new ZDT1();
       List<DoubleSolution> population = algorithm.getResult();
       long computingTime = algorithmRunner.getComputingTime();
 
-      JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-      String name = "_RNSGAII_ZDT1_ant_0_0";//+"_"+cont;
+      JMetalLogger.logger.info("Total execution time: " + computingTime + "ms"+ " cont "+cont);
+      String name = "_PPSN_RNSGAII_DTLZ3_0_0_"+cont;//+"_"+cont;
       // printFinalSolutionSet(population);
       new SolutionListOutput(population)
           .setSeparator("\t")
@@ -215,7 +215,7 @@ problem = new ZDT1();
       System.out.println("Reference Points-----" + ((ARP) algorithm).getReferencePoints().size());
       writeLargerTextFile("ReferencePoint" + name + ".txt", ((ARP) algorithm).getReferencePoints());
       writeLargerDoubleFile("Distances" + name + ".txt", ((ARP) algorithm).getDistances());
-    //}//for borrar
+    }//for borrar
   }
   private static List<Double> getReferencePoint(ReferencePoint referencePoint){
     List<Double> result = new ArrayList<>();
@@ -235,7 +235,7 @@ problem = new ZDT1();
           line += list.get(i).getObjective(j) + " ";
         }
         line = line.substring(0,line.lastIndexOf(" "));
-        i+=2;
+        i++;
         writer.write(line);
         writer.newLine();
       }
