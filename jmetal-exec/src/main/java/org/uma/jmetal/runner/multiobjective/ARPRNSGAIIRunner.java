@@ -89,7 +89,7 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
       referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf" ;
     }
 
-    problem =new DTLZ3(7,2);//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
+    problem =new DTLZ4(7,2);//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
 //problem = new ZDT1();
     double crossoverProbability = 0.9 ;
     double crossoverDistributionIndex = 20.0 ;
@@ -174,7 +174,7 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
       }
 
       asp.add(0.0);//x 0
-      asp.add(0.0);//y 1
+      asp.add(1.0);//y 1
       algorithmRun = new RNSGAIIBuilder<DoubleSolution>(problem, crossover, mutation,
           referencePoint, epsilon)
           .setSelectionOperator(selection)
@@ -198,7 +198,7 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
       long computingTime = algorithmRunner.getComputingTime();
 
       JMetalLogger.logger.info("Total execution time: " + computingTime + "ms"+ " cont "+cont);
-      String name = "_PPSN_RNSGAII_DTLZ3_0_0_"+cont;//+"_"+cont;
+      String name = "_PPSN_RNSGAII_DTLZ4_0_1_"+cont;//+"_"+cont;
       // printFinalSolutionSet(population);
       new SolutionListOutput(population)
           .setSeparator("\t")
