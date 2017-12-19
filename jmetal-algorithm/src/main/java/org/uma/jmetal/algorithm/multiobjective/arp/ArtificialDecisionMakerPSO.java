@@ -156,7 +156,7 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
 
   @Override
   protected boolean isStoppingConditionReached() {
-    boolean stop = evaluations >= maxEvaluations;
+    boolean stop = evaluations >= maxEvaluations || stopConditionDistance(distances,tolerance);
     // if(distancesRP!=null){
     //  stop = stop || distancesRP.contains(0.0);
     // }
@@ -166,6 +166,17 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
     return stop;
   }
 
+  private boolean stopConditionDistance(List<Double> list, double value){
+    boolean result = false;
+    if(list!=null){
+      int i=0;
+      while (!result && i<list.size() ){
+        result = list.get(i)<value;
+        i++;
+      }
+    }
+    return result;
+  }
   @Override
   protected void initProgress() {
     evaluations =0;

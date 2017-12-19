@@ -32,6 +32,9 @@ import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ4;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ5;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ6;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ7;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.runner.AbstractAlgorithmRunner;
 import org.uma.jmetal.solution.DoubleSolution;
@@ -78,8 +81,14 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
     SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
     String referenceParetoFront = "" ;
 
-    String problemName ;
-    if (args.length == 1) {
+    int numberIterations =21;
+    String problemName = "DTLZ1" ;
+    int numberObjectives = 3;
+    int numberVariables = 2*numberObjectives;
+    String algorithmName ="WASFGA";
+    String weightsName = "MOEAD_Weights/W3D_100.dat";
+    int populationSize=100;
+    /*if (args.length == 1) {
       problemName = args[0];
     } else if (args.length == 2) {
       problemName = args[0] ;
@@ -87,9 +96,56 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
     } else {
       problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
       referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf" ;
+    }*/
+    if(args!=null){
+      if(args.length>2) {
+        problemName = args[0];
+        numberObjectives = Integer.parseInt(args[1]);
+        numberVariables = 2*numberObjectives;
+        algorithmName = args[2];
+      }
     }
 
-    problem =new DTLZ4(7,2);//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
+    switch (problemName){
+      case "DTLZ1":
+        problem =new DTLZ1(numberVariables,numberObjectives);
+        break;
+      case "DTLZ2":
+        problem =new DTLZ2(numberVariables,numberObjectives);
+        break;
+      case "DTLZ3":
+        problem =new DTLZ3(numberVariables,numberObjectives);
+        break;
+      case "DTLZ4":
+        problem =new DTLZ4(numberVariables,numberObjectives);
+        break;
+      case "DTLZ5":
+        problem =new DTLZ5(numberVariables,numberObjectives);
+        break;
+      case "DTLZ6":
+        problem =new DTLZ6(numberVariables,numberObjectives);
+        break;
+      case "DTLZ7":
+        problem =new DTLZ7(numberVariables,numberObjectives);
+        break;
+      default:
+        problem =new DTLZ1(numberVariables,numberObjectives);//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
+    }
+    switch (numberObjectives){
+      case 3:weightsName = "MOEAD_Weights/W3D_100.dat";
+        populationSize=100;
+        break;
+      case 5:
+        weightsName = "MOEAD_Weights/W5D_1000.dat";
+        populationSize=1000;
+        break;
+      case 7:
+        weightsName = "MOEAD_Weights/W7D_210.dat";
+        populationSize=210;
+        break;
+    }
+
+    //problem =new DTLZ4(7,2);//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
 //problem = new ZDT1();
     double crossoverProbability = 0.9 ;
     double crossoverDistributionIndex = 20.0 ;
@@ -113,7 +169,7 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
     }
     double tolerance = 0.5;
 
-    for(int cont=0;cont<11;cont++) {
+    for(int cont=0;cont<11;numberIterations++) {
       List<Double> referencePoint = new ArrayList<>();
 
     /*referencePoint.add(0.0) ;
@@ -175,15 +231,17 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
 
       asp.add(0.0);//x 0
       asp.add(1.0);//y 1
-      algorithmRun = new RNSGAIIBuilder<DoubleSolution>(problem, crossover, mutation,
-          referencePoint, epsilon)
-          .setSelectionOperator(selection)
-          .setMaxEvaluations(20000)
-         .setPopulationSize(100)
-         .build();
-      //algorithmRun =  new WASFGA<DoubleSolution>(problem, 100, 200, crossover, mutation,
-       //    selection,new SequentialSolutionListEvaluator<DoubleSolution>(),referencePoint) ;
-
+      if(algorithmName.equalsIgnoreCase("RNSGAII")) {
+        algorithmRun = new RNSGAIIBuilder<DoubleSolution>(problem, crossover, mutation,
+            referencePoint, epsilon)
+            .setSelectionOperator(selection)
+            .setMaxEvaluations(20000)
+            .setPopulationSize(populationSize)
+            .build();
+      }else {
+        algorithmRun = new WASFGA<DoubleSolution>(problem, populationSize, 200, crossover, mutation,
+            selection, new SequentialSolutionListEvaluator<DoubleSolution>(), referencePoint,weightsName);
+      }
       algorithm = new ARPBuilder<DoubleSolution>(problem, algorithmRun)
           .setConsiderationProbability(0.5)
           .setMaxEvaluations(11)
@@ -198,7 +256,8 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
       long computingTime = algorithmRunner.getComputingTime();
 
       JMetalLogger.logger.info("Total execution time: " + computingTime + "ms"+ " cont "+cont);
-      String name = "_PPSN_RNSGAII_DTLZ4_0_1_"+cont;//+"_"+cont;
+     // String name = "_PPSN_RNSGAII_DTLZ4_0_1_"+cont;//+"_"+cont;
+      String name = "_PPSN_"+algorithmRun.getName()+"_"+problemName+"_"+nameProblem(asp)+cont;
       // printFinalSolutionSet(population);
       new SolutionListOutput(population)
           .setSeparator("\t")
@@ -216,6 +275,13 @@ public class ARPRNSGAIIRunner extends AbstractAlgorithmRunner {
       writeLargerTextFile("ReferencePoint" + name + ".txt", ((ARP) algorithm).getReferencePoints());
       writeLargerDoubleFile("Distances" + name + ".txt", ((ARP) algorithm).getDistances());
     }//for borrar
+  }
+  private static String nameProblem(List<Double> list){
+    String result ="";
+    for (int i =0; i<list.size();i++){
+      result += list.get(i)+"_";
+    }
+    return result;
   }
   private static List<Double> getReferencePoint(ReferencePoint referencePoint){
     List<Double> result = new ArrayList<>();

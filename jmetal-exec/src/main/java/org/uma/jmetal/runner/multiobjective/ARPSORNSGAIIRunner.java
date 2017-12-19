@@ -80,10 +80,10 @@ public class ARPSORNSGAIIRunner extends AbstractAlgorithmRunner {
     MutationOperator<DoubleSolution> mutation;
     SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
     String referenceParetoFront = "" ;
-    int numberIterations =11;
+    int numberIterations =21;
     String problemName = "DTLZ1" ;
     int numberObjectives = 3;
-    int numberVariables = 7;
+    int numberVariables = 2*numberObjectives;
     String algorithmName ="WASFGA";
     String weightsName = "MOEAD_Weights/W3D_100.dat";
     int populationSize=100;
@@ -98,11 +98,11 @@ public class ARPSORNSGAIIRunner extends AbstractAlgorithmRunner {
       referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf" ;
     }*/
     if(args!=null){
-      if(args.length>3) {
+      if(args.length>2) {
         problemName = args[0];
         numberObjectives = Integer.parseInt(args[1]);
-        numberVariables = Integer.parseInt(args[2]);
-        algorithmName = args[3];
+        numberVariables = 2*numberObjectives;
+        algorithmName = args[2];
       }
     }
 
@@ -224,17 +224,17 @@ public class ARPSORNSGAIIRunner extends AbstractAlgorithmRunner {
       double epsilon = 0.0045;
       List<Double> asp = new ArrayList<>();
       for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
-        // double value=JMetalRandom.getInstance().nextDouble(((AbstractDoubleProblem)problem).getLowerBound(i),((AbstractDoubleProblem)problem).getUpperBound(i));
+         double value=JMetalRandom.getInstance().nextDouble(((AbstractDoubleProblem)problem).getLowerBound(i),((AbstractDoubleProblem)problem).getUpperBound(i));
         // System.out.println(value);
-        //asp.add(value);
+        asp.add(value);
         //asp.add(0.0);
         referencePoint.add(0.0);//initialization
       }
       //asp.add(0.2);
       //asp.add(0.8);
-      asp.add(0.0);//x
-      asp.add(0.0);//y
-      asp.add(0.0);//z
+     // asp.add(0.0);//x
+     // asp.add(0.0);//y
+     // asp.add(0.0);//z
       if(algorithmName.equalsIgnoreCase("RNSGAII")) {
           algorithmRun = new RNSGAIIBuilder<DoubleSolution>(problem, crossover, mutation, referencePoint,epsilon)
              .setSelectionOperator(selection)
@@ -260,7 +260,7 @@ public class ARPSORNSGAIIRunner extends AbstractAlgorithmRunner {
       long computingTime = algorithmRunner.getComputingTime();
 
       JMetalLogger.logger.info("Total execution time: " + computingTime + "ms" + " cont " +cont);
-      String name = "_PSO_+"+algorithmRun.getName()+"_"+problemName+"_"+nameProblem(asp)+cont;
+      String name = "_PSO_"+algorithmRun.getName()+"_"+problemName+"_"+nameProblem(asp)+cont;
       // printFinalSolutionSet(population);
       new SolutionListOutput(population)
           .setSeparator("\t")
