@@ -1,5 +1,11 @@
 package org.uma.jmetal.algorithm.multiobjective.arp;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.uma.jmetal.algorithm.InteractiveAlgorithm;
 import org.uma.jmetal.algorithm.multiobjective.mombi.util.ASFWASFGA;
 import org.uma.jmetal.algorithm.singleobjective.differentialevolution.DifferentialEvolution;
@@ -52,10 +58,10 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
   private ReferencePointProblem rfProblem;
   private SolutionListEvaluator<DoubleSolution> evaluator;
   private DoubleProblem auxProblem;
-  private List<DoubleSolution> prueba;
+ // private List<DoubleSolution> prueba;
   public ArtificialDecisionMakerPSO(Problem<S> problem,
       InteractiveAlgorithm<S, List<S>> algorithm,double considerationProbability,double tolerance,int maxEvaluations
-      ,List<Double> rankingCoeficient,int numberReferencePoints,List<Double> asp,SolutionListEvaluator<DoubleSolution> evaluator) {
+      ,List<Double> rankingCoeficient,int numberReferencePoints,List<Double> asp,SolutionListEvaluator<DoubleSolution> evaluator,String aspFile, int aspOrden) {
     super(problem, algorithm);
     //crear pso monoobjectivo
     //el pso se crea cuando se le pasa el frente
@@ -75,6 +81,10 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
     this.allReferencePoints = new ArrayList<>();
     this.distances = new ArrayList<>();
     this.distancesRP = new ArrayList<>();
+
+    if(aspFile!=null){
+      asp = this.getAspirationLevel(aspFile).get(aspOrden);
+    }
     this.aspList = asp;
     if(asp!=null){
       this.asp= new IdealPoint(numberOfObjectives);
@@ -84,7 +94,7 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
         i++;
       }
     }
-    prueba = new ArrayList<>();
+    //prueba = new ArrayList<>();
   }
   private  void  initialiceRankingCoeficient(){
     rankingCoeficient = new ArrayList<>();
@@ -156,7 +166,7 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
 
   @Override
   protected boolean isStoppingConditionReached() {
-    boolean stop = evaluations >= maxEvaluations || stopConditionDistance(distances,tolerance);
+    boolean stop = evaluations > maxEvaluations || stopConditionDistance(distances,tolerance);
     // if(distancesRP!=null){
     //  stop = stop || distancesRP.contains(0.0);
     // }
@@ -352,14 +362,14 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
     double data=dte.doPrediction(index,solution);
     return data;//currentReferencePoint.getObjective(index);
   }
-  private double predictionDouble(int index,List<DoubleSolution> paretoOptimalSolutions,
+  /*private double predictionDouble(int index,List<DoubleSolution> paretoOptimalSolutions,
       DoubleSolution solution) {
     //FALTA PREDICTION
     DecisionTreeEstimator<DoubleSolution> dte = new DecisionTreeEstimator<DoubleSolution>(prueba);
 
     double data=dte.doPredictionVariable(index,solution);
     return data;//currentReferencePoint.getObjective(index);
-  }
+  }*/
   @Override
   protected void updateParetoOptimal(List<S> front,List<S> paretoOptimalSolutions) {
     paretoOptimalSolutions.addAll(front);
@@ -440,5 +450,27 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
     solution.setObjective(0,asf.evaluate(referencePointToSolution(asp),0));
     return solution;
   }
-
+  private  List<List<Double>> getAspirationLevel(String name){
+    List<List<Double>> result = null;
+    if(name!=null){
+      try{
+        InputStream in = getClass().getResourceAsStream("/" + name);
+        InputStreamReader isr = new InputStreamReader(in);
+        BufferedReader br = new BufferedReader(isr);
+        result = new ArrayList<>();
+        String thisLine;
+        while ((thisLine = br.readLine()) != null) { // while loop begins here
+          String [] aux =thisLine.split(" ");
+          List<Double> aspList = new ArrayList<>();
+          for (int i = 0; i <aux.length ; i++) {
+            aspList.add(Double.parseDouble(aux[i]));
+          }
+          result.add(aspList);
+        } // end while
+        br.close();
+      }catch (Exception ex){
+      }
+    }
+    return result;
+  }
 }

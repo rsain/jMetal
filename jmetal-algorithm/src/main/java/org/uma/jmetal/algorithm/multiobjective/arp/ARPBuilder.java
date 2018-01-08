@@ -25,6 +25,8 @@ public class ARPBuilder<S extends Solution<?>> implements AlgorithmBuilder<ARP<S
   private List<Double> rankingCoeficient;
   private int numberReferencePoints;
   private List<Double> asp;
+  private String aspFile;
+  private int aspOrden =0;
   /**
    * ARPBuilder constructor
    */
@@ -78,10 +80,25 @@ public class ARPBuilder<S extends Solution<?>> implements AlgorithmBuilder<ARP<S
     return this;
   }
 
+  public ARPBuilder<S> setNumberReferencePoints(int numberReferencePoints) {
+    this.numberReferencePoints = numberReferencePoints;
+    return this;
+  }
+
+  public ARPBuilder<S> setAspFile(String aspFile) {
+    this.aspFile = aspFile;
+    return this;
+  }
+
+  public ARPBuilder<S> setAspOrden(int aspOrden) {
+    this.aspOrden = aspOrden;
+    return this;
+  }
+
   public ARP<S> build() {
     ARP<S> algorithmRun = null ;
     algorithmRun = new ARP<S>(problem,algorithm,considerationProbability,tolerance, maxEvaluations,
-          rankingCoeficient,numberReferencePoints,asp);
+          rankingCoeficient,numberReferencePoints,asp,aspFile,aspOrden);
 
     return algorithmRun ;
   }

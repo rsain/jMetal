@@ -1,5 +1,11 @@
 package org.uma.jmetal.algorithm.multiobjective.arp;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.uma.jmetal.algorithm.InteractiveAlgorithm;
 import org.uma.jmetal.algorithm.multiobjective.mombi.util.ASFWASFGA;
 import org.uma.jmetal.problem.Problem;
@@ -43,7 +49,7 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
   private S solutionRun=null;
   public ARP(Problem<S> problem,
       InteractiveAlgorithm<S,List<S>> algorithm,double considerationProbability,double tolerance,int maxEvaluations
-  ,List<Double> rankingCoeficient,int numberReferencePoints,List<Double> asp) {
+  ,List<Double> rankingCoeficient,int numberReferencePoints,List<Double> asp,String aspFile, int aspOrden) {
     super(problem, algorithm);
     this.considerationProbability = considerationProbability;
     this.tolerance = tolerance;
@@ -58,6 +64,9 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
     this.allReferencePoints = new ArrayList<>();
     this.distances = new ArrayList<>();
     this.distancesRP = new ArrayList<>();
+    if(aspFile!=null){
+      asp = this.getAspirationLevel(aspFile).get(aspOrden);
+    }
     if(asp!=null){
       this.asp= new IdealPoint(numberOfObjectives);
       int i=0;
@@ -139,7 +148,7 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
 
   @Override
   protected boolean isStoppingConditionReached() {
-    boolean stop = evaluations >= maxEvaluations || stopConditionDistance(distances,tolerance);
+    boolean stop = evaluations > maxEvaluations || stopConditionDistance(distances,tolerance);
     // if(distancesRP!=null){
     //  stop = stop || distancesRP.contains(0.0);
     // }
@@ -357,5 +366,29 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
     asf.setUtopia(utopia);
     solution.setObjective(0,asf.evaluate(referencePointToSolution(asp),0));
     return solution;
+  }
+  private  List<List<Double>> getAspirationLevel(String name){
+    List<List<Double>> result = null;
+    if(name!=null){
+      Path path = Paths.get(name);
+      try{
+        InputStream in = getClass().getResourceAsStream("/" + name);
+        InputStreamReader isr = new InputStreamReader(in);
+        BufferedReader br = new BufferedReader(isr);
+        result = new ArrayList<>();
+        String thisLine;
+        while ((thisLine = br.readLine()) != null) { // while loop begins here
+          String [] aux =thisLine.split(" ");
+          List<Double> aspList = new ArrayList<>();
+          for (int i = 0; i <aux.length ; i++) {
+            aspList.add(Double.parseDouble(aux[i]));
+          }
+          result.add(aspList);
+        } // end while
+        br.close();
+      }catch (Exception ex){
+      }
+    }
+    return result;
   }
 }

@@ -27,7 +27,8 @@ public class ArtificialDecisionMakerPSOBuilder<S extends Solution<?>> implements
   private int numberReferencePoints;
   private List<Double> asp;
   private SolutionListEvaluator<DoubleSolution> evaluator;
-
+  private String aspFile;
+  private int aspOrden =0;
   /**
    * ARPBuilder constructor
    */
@@ -95,10 +96,20 @@ public class ArtificialDecisionMakerPSOBuilder<S extends Solution<?>> implements
     return this;
   }
 
+  public ArtificialDecisionMakerPSOBuilder<S> setAspFile(String aspFile) {
+    this.aspFile = aspFile;
+    return this;
+  }
+
+  public ArtificialDecisionMakerPSOBuilder<S> setAspOrden(int aspOrden) {
+    this.aspOrden = aspOrden;
+    return this;
+  }
+
   public ArtificialDecisionMakerPSO<S> build() {
     ArtificialDecisionMakerPSO<S> algorithmRun = null ;
     algorithmRun = new ArtificialDecisionMakerPSO<S>(problem,algorithm,considerationProbability,tolerance, maxEvaluations,
-          rankingCoeficient,numberReferencePoints,asp,evaluator);
+          rankingCoeficient,numberReferencePoints,asp,evaluator,aspFile,aspOrden);
 
     return algorithmRun ;
   }
