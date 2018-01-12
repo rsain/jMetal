@@ -64,8 +64,8 @@ public class StandardPSO extends AbstractParticleSwarmOptimization<DoubleSolutio
     this.evaluator = evaluator;
     this.objectiveId = objectiveId;
 
-    weight = 1.0 / (2.0 * Math.log(2));
-    c = 1.0 / 2.0 + Math.log(2);
+    weight = 1.0 / (3.0 * Math.log(2));
+    c = 1.0 / 3.0 + Math.log(2);
 
     fitnessComparator = new ObjectiveComparator<DoubleSolution>(objectiveId);
     findBestSolution = new BestSolutionSelection<DoubleSolution>(fitnessComparator);

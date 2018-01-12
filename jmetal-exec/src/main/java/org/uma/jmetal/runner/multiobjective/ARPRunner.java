@@ -82,10 +82,13 @@ public class ARPRunner extends AbstractAlgorithmRunner {
     SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
     String referenceParetoFront = "" ;
 
-    int numberIterations =21;
+    int numberIterations =1;
+   // String problemName = "DTLZ1" ;
+    //int numberObjectives = 3;
+    //int numberVariables = 7;
     String problemName = "DTLZ1" ;
     int numberObjectives = 3;
-    int numberVariables = 2*numberObjectives;
+    int numberVariables = 7;
     String algorithmName ="WASFGA";
     String weightsName = "MOEAD_Weights/W3D_100.dat";
     int populationSize=100;
@@ -103,34 +106,48 @@ public class ARPRunner extends AbstractAlgorithmRunner {
     if(args!=null){
       if(args.length>2) {
         problemName = args[0];
-        numberObjectives = Integer.parseInt(args[1]);
-        numberVariables = 2*numberObjectives;
-        algorithmName = args[2];
-        aspOrden = Integer.parseInt(args[3]);
+        numberIterations = Integer.parseInt(args[1]);
+        numberObjectives = Integer.parseInt(args[2]);
+        algorithmName = args[3];
+        aspOrden = Integer.parseInt(args[4]);
       }
     }
 
     switch (problemName){
       case "DTLZ1":
+        numberVariables = 7;
         problem =new DTLZ1(numberVariables,numberObjectives);
+
         break;
       case "DTLZ2":
+        numberVariables = 12;
         problem =new DTLZ2(numberVariables,numberObjectives);
+
         break;
       case "DTLZ3":
+        numberVariables = 12;
         problem =new DTLZ3(numberVariables,numberObjectives);
+
         break;
       case "DTLZ4":
+        numberVariables = 12;
         problem =new DTLZ4(numberVariables,numberObjectives);
+
         break;
       case "DTLZ5":
+        numberVariables = 12;
         problem =new DTLZ5(numberVariables,numberObjectives);
+
         break;
       case "DTLZ6":
+        numberVariables = 12;
         problem =new DTLZ6(numberVariables,numberObjectives);
+
         break;
       case "DTLZ7":
+        numberVariables = 22;
         problem =new DTLZ7(numberVariables,numberObjectives);
+
         break;
       default:
         problem =new DTLZ1(numberVariables,numberObjectives);//  ProblemUtils.<DoubleSolution> loadProblem(problemName);//Tanaka();//
@@ -141,7 +158,8 @@ public class ARPRunner extends AbstractAlgorithmRunner {
         aspName = "ppsn_asp/ASP_3Obj.dat";
         break;
       case 5:
-        weightsName = "MOEAD_Weights/W5D_1000.dat";
+        //weightsName = "MOEAD_Weights/W5D_1000.dat";
+        weightsName = "MOEAD_Weights/W5D_126.dat";
         populationSize=1000;
         aspName = "ppsn_asp/ASP_5Obj.dat";
         break;
@@ -176,7 +194,7 @@ public class ARPRunner extends AbstractAlgorithmRunner {
     }
     double tolerance = 0.5;
 
-    for(int cont=0;cont<11;numberIterations++) {
+    for (int cont = 0; cont < numberIterations ; cont++) {
       List<Double> referencePoint = new ArrayList<>();
 
     /*referencePoint.add(0.0) ;
@@ -266,12 +284,12 @@ public class ARPRunner extends AbstractAlgorithmRunner {
 
       JMetalLogger.logger.info("Total execution time: " + computingTime + "ms"+ " cont "+cont);
      // String name = "_PPSN_RNSGAII_DTLZ4_0_1_"+cont;//+"_"+cont;
-      String name = "_PPSN_"+algorithmRun.getName()+"_"+problemName+"_"+nameProblem(asp)+cont;
+      //String name = "_ORIGINAL_"+algorithmRun.getName()+"_"+problemName+"_"+numberObjectives+"_"+aspOrden+"_"+cont;
       // printFinalSolutionSet(population);
       new SolutionListOutput(population)
           .setSeparator("\t")
-          .setVarFileOutputContext(new DefaultFileOutputContext("VAR" + name + ".tsv"))
-          .setFunFileOutputContext(new DefaultFileOutputContext("FUN" + name + ".tsv"))
+          .setVarFileOutputContext(new DefaultFileOutputContext("VAR" + ".tsv"))
+          .setFunFileOutputContext(new DefaultFileOutputContext("FUN"  + ".tsv"))
           .print();
 
       JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
@@ -280,9 +298,9 @@ public class ARPRunner extends AbstractAlgorithmRunner {
       // if (!referenceParetoFront.equals("")) {
       //   printQualityIndicators(population, referenceParetoFront) ;
       //  }
-      System.out.println("Reference Points-----" + ((ARP) algorithm).getReferencePoints().size());
-      writeLargerTextFile("ReferencePoint" + name + ".txt", ((ARP) algorithm).getReferencePoints());
-      writeLargerDoubleFile("Distances" + name + ".txt", ((ARP) algorithm).getDistances());
+     // System.out.println("Reference Points-----" + ((ARP) algorithm).getReferencePoints().size());
+      writeLargerTextFile("ReferencePoint"  + ".txt", ((ARP) algorithm).getReferencePoints());
+      writeLargerDoubleFile("Distances"  + ".txt", ((ARP) algorithm).getDistances());
     }//for borrar
   }
   private static String nameProblem(List<Double> list){
@@ -292,6 +310,7 @@ public class ARPRunner extends AbstractAlgorithmRunner {
     }
     return result;
   }
+
   private static List<Double> getReferencePoint(ReferencePoint referencePoint){
     List<Double> result = new ArrayList<>();
     for (int i = 0; i < referencePoint.getNumberOfObjectives(); i++) {

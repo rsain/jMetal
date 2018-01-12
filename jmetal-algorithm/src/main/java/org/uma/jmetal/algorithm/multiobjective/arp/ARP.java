@@ -148,7 +148,7 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
 
   @Override
   protected boolean isStoppingConditionReached() {
-    boolean stop = evaluations > maxEvaluations || stopConditionDistance(distances,tolerance);
+    boolean stop = evaluations > maxEvaluations ;//|| stopConditionDistance(distances,tolerance);
     // if(distancesRP!=null){
     //  stop = stop || distancesRP.contains(0.0);
     // }
@@ -294,7 +294,9 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
 
   @Override
   public List<ReferencePoint> getReferencePoints() {
-    return allReferencePoints;
+
+    allReferencePoints.remove(allReferencePoints.size()-1);
+   return allReferencePoints;
   }
 
   @Override

@@ -166,7 +166,7 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
 
   @Override
   protected boolean isStoppingConditionReached() {
-    boolean stop = evaluations > maxEvaluations || stopConditionDistance(distances,tolerance);
+    boolean stop = evaluations > maxEvaluations; //|| stopConditionDistance(distances,tolerance);
     // if(distancesRP!=null){
     //  stop = stop || distancesRP.contains(0.0);
     // }
@@ -253,15 +253,15 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
     if(swarm.size()<=numPart){
       numPart =swarm.size()-1;
     }
-   /* pso = new StandardPSO(rfProblem,
+    pso = new StandardPSO(rfProblem,
         swarm.size(),
         80000, numPart, evaluator,swarm,aspList);
 
      pso.run();
          DoubleSolution psoSolution = pso.getResult();
-         prueba.add(psoSolution);*/
 
-    DifferentialEvolutionSelection selection;
+
+    /*DifferentialEvolutionSelection selection;
     DifferentialEvolutionCrossover crossover;
     crossover = new DifferentialEvolutionCrossover(0.5, 0.5, "rand/1/bin") ;
     selection = new DifferentialEvolutionSelection();
@@ -279,7 +279,7 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
         .setPopulationSize(swarm.size()).setInitialPopulation(swarm)
         .build() ;
     de.run();
-     DoubleSolution psoSolution = de.getResult();
+     DoubleSolution psoSolution = de.getResult();*/
     for(int numRefPoint=0;numRefPoint<numberReferencePoints;numRefPoint++){
       if(solutionRun!=null) {
         calculateDistance(solutionRun, asp);
@@ -377,6 +377,7 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
 
   @Override
   public List<ReferencePoint> getReferencePoints() {
+    allReferencePoints.remove(allReferencePoints.size()-1);
     return allReferencePoints;
   }
 
