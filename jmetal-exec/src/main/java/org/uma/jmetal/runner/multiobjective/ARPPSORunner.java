@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.InteractiveAlgorithm;
-import org.uma.jmetal.algorithm.multiobjective.arp.ARP;
-import org.uma.jmetal.algorithm.multiobjective.arp.ARPBuilder;
 import org.uma.jmetal.algorithm.multiobjective.arp.ArtificialDecisionMakerPSO;
 import org.uma.jmetal.algorithm.multiobjective.arp.ArtificialDecisionMakerPSOBuilder;
 import org.uma.jmetal.algorithm.multiobjective.rnsgaii.RNSGAIIBuilder;
@@ -43,7 +41,6 @@ import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ4;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ5;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ6;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ7;
-import org.uma.jmetal.problem.multiobjective.zdt.ZDT1;
 import org.uma.jmetal.runner.AbstractAlgorithmRunner;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
@@ -57,7 +54,6 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.referencePoint.ReferencePoint;
 import org.uma.jmetal.util.referencePoint.impl.IdealPoint;
 import org.uma.jmetal.util.referencePoint.impl.NadirPoint;
-import org.uma.jmetal.utility.GenerateReferenceFrontFromFile;
 
 /**
  * Class to configure and run the R-NSGA-II algorithm
@@ -89,7 +85,7 @@ public class ARPPSORunner extends AbstractAlgorithmRunner {
     String weightsName = "MOEAD_Weights/W3D_100.dat";
     int aspOrden =0;
     int populationSize=100;
-    String aspName = "ppsn_asp/ASP_3Obj.dat";
+    String aspName = "ppsn_asp/ASP_DTLZ1_3Obj.dat";
     /*String problemName ;
     if (args.length == 1) {
       problemName = args[0];
@@ -119,7 +115,7 @@ public class ARPPSORunner extends AbstractAlgorithmRunner {
       case "DTLZ2":
         numberVariables = 12;
         problem =new DTLZ2(numberVariables,numberObjectives);
-
+        aspName = "ppsn_asp/ASP_DTLZ1_3Obj.dat";
         break;
       case "DTLZ3":
         numberVariables = 12;
@@ -152,17 +148,66 @@ public class ARPPSORunner extends AbstractAlgorithmRunner {
     switch (numberObjectives){
       case 3:weightsName = "MOEAD_Weights/W3D_100.dat";
         populationSize=100;
-        aspName= "ppsn_asp/ASP_3Obj.dat";
+
+        switch (problemName){
+          case "DTLZ1":aspName = "ppsn_asp/ASP_DTLZ1_3Obj.dat";
+            break;
+          case "DTLZ2":aspName = "ppsn_asp/ASP_DTLZ2_3Obj.dat";
+            break;
+          case "DTLZ3":aspName = "ppsn_asp/ASP_DTLZ3_3Obj.dat";
+            break;
+          case "DTLZ4":aspName = "ppsn_asp/ASP_DTLZ4_3Obj.dat";
+            break;
+          case "DTLZ5":aspName = "ppsn_asp/ASP_DTLZ5_3Obj.dat";
+            break;
+          case "DTLZ6":aspName = "ppsn_asp/ASP_DTLZ6_3Obj.dat";
+            break;
+          case "DTLZ7":aspName = "ppsn_asp/ASP_DTLZ7_3Obj.dat";
+            break;
+        }
+
         break;
       case 5:
-        weightsName = "MOEAD_Weights/W5D_126.dat";
-        populationSize=126;
-        aspName= "ppsn_asp/ASP_5Obj.dat";
+        weightsName = "MOEAD_Weights/W5D_100.dat";
+        populationSize=100;
+        aspName= "ppsn_asp/ASP_DTLZ1_5Obj.dat";
+        switch (problemName){
+          case "DTLZ1":aspName = "ppsn_asp/ASP_DTLZ1_5Obj.dat";
+            break;
+          case "DTLZ2":aspName = "ppsn_asp/ASP_DTLZ2_5Obj.dat";
+            break;
+          case "DTLZ3":aspName = "ppsn_asp/ASP_DTLZ3_5Obj.dat";
+            break;
+          case "DTLZ4":aspName = "ppsn_asp/ASP_DTLZ4_5Obj.dat";
+            break;
+          case "DTLZ5":aspName = "ppsn_asp/ASP_DTLZ5_5Obj.dat";
+            break;
+          case "DTLZ6":aspName = "ppsn_asp/ASP_DTLZ6_5Obj.dat";
+            break;
+          case "DTLZ7":aspName = "ppsn_asp/ASP_DTLZ7_5Obj.dat";
+            break;
+        }
         break;
       case 7:
-        weightsName = "MOEAD_Weights/W7D_210.dat";
-        populationSize=210;
-        aspName= "ppsn_asp/ASP_7Obj.dat";
+        weightsName = "MOEAD_Weights/W7D_100.dat";
+        populationSize=100;
+        aspName= "ppsn_asp/ASP_DTLZ1_7Obj.dat";
+        switch (problemName){
+          case "DTLZ1":aspName= "ppsn_asp/ASP_DTLZ1_7Obj.dat";
+            break;
+          case "DTLZ2":aspName= "ppsn_asp/ASP_DTLZ2_7Obj.dat";
+            break;
+          case "DTLZ3":aspName= "ppsn_asp/ASP_DTLZ3_7Obj.dat";
+            break;
+          case "DTLZ4":aspName= "ppsn_asp/ASP_DTLZ4_7Obj.dat";
+            break;
+          case "DTLZ5":aspName= "ppsn_asp/ASP_DTLZ5_7Obj.dat";
+            break;
+          case "DTLZ6":aspName= "ppsn_asp/ASP_DTLZ6_7Obj.dat";
+            break;
+          case "DTLZ7":aspName= "ppsn_asp/ASP_DTLZ7_7Obj.dat";
+            break;
+        }
         break;
     }
 

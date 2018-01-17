@@ -372,7 +372,8 @@ public class ArtificialDecisionMakerPSO<S extends Solution<?>> extends  Automati
   }*/
   @Override
   protected void updateParetoOptimal(List<S> front,List<S> paretoOptimalSolutions) {
-    paretoOptimalSolutions.addAll(front);
+    //paretoOptimalSolutions.addAll(front);
+    paretoOptimalSolutions = new ArrayList<>(front);
   }
 
   @Override

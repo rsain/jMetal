@@ -289,7 +289,8 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
  }
   @Override
   protected void updateParetoOptimal(List<S> front,List<S> paretoOptimalSolutions) {
-    paretoOptimalSolutions.addAll(front);
+    //paretoOptimalSolutions.addAll(front);
+    paretoOptimalSolutions = new ArrayList<>(front);
   }
 
   @Override
