@@ -9,9 +9,12 @@ import org.uma.jmetal.operator.impl.selection.BestSolutionSelection;
 import org.uma.jmetal.problem.DoubleProblem;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
+import org.uma.jmetal.util.distance.impl.EuclideanDistanceBetweenSolutionsInObjectiveSpace;
+import org.uma.jmetal.util.distance.impl.EuclideanDistanceBetweenSolutionsInSolutionSpace;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.neighborhood.impl.AdaptiveRandomNeighborhood;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
+import org.uma.jmetal.util.referencePoint.ReferencePoint;
 import org.uma.jmetal.util.solutionattribute.impl.GenericSolutionAttribute;
 
 /**
@@ -64,8 +67,8 @@ public class StandardPSO extends AbstractParticleSwarmOptimization<DoubleSolutio
     this.evaluator = evaluator;
     this.objectiveId = objectiveId;
 
-    weight = 1.0 / (3.0 * Math.log(2));
-    c = 1.0 / 3.0 + Math.log(2);
+    weight = 1.0 / (2.0 * Math.log(2));
+    c = 1.0 / 2.0 + Math.log(2);
 
     fitnessComparator = new ObjectiveComparator<DoubleSolution>(objectiveId);
     findBestSolution = new BestSolutionSelection<DoubleSolution>(fitnessComparator);
@@ -175,13 +178,13 @@ public class StandardPSO extends AbstractParticleSwarmOptimization<DoubleSolutio
 
       r1 = randomGenerator.nextDouble(0, c);
       r2 = randomGenerator.nextDouble(0, c);
-      r3 = randomGenerator.nextDouble(0, c);
+      //r3 = randomGenerator.nextDouble(0, c);
       if (localBest[i] != neighborhoodBest[i]) {
         for (int var = 0; var < particle.getNumberOfVariables(); var++) {
           speed[i][var] = weight * speed[i][var] +
                   r1 * (localBest[i].getVariableValue(var) - particle.getVariableValue(var)) +
-                  r2 * (neighborhoodBest[i].getVariableValue(var) - particle.getVariableValue(var))+
-                  r3 * (asp.get(var) - particle.getVariableValue(var));
+                  r2 * (neighborhoodBest[i].getVariableValue(var) - particle.getVariableValue(var));//+
+                  //r3 * (asp.get(var) - particle.getVariableValue(var));
         }
       } else {
         for (int var = 0; var < particle.getNumberOfVariables(); var++) {
@@ -200,14 +203,14 @@ public class StandardPSO extends AbstractParticleSwarmOptimization<DoubleSolutio
       for (int var = 0; var < particle.getNumberOfVariables(); var++) {
         particle.setVariableValue(var, particle.getVariableValue(var) + speed[i][var]);
 
-        if (particle.getVariableValue(var) < problem.getLowerBound(var)) {
+        /*if (particle.getVariableValue(var) < problem.getLowerBound(var)) {
           particle.setVariableValue(var, problem.getLowerBound(var));
           speed[i][var] = 0;
         }
         if (particle.getVariableValue(var) > problem.getUpperBound(var)) {
           particle.setVariableValue(var, problem.getUpperBound(var));
           speed[i][var] = 0;
-        }
+        }*/
       }
     }
   }
@@ -241,8 +244,41 @@ public class StandardPSO extends AbstractParticleSwarmOptimization<DoubleSolutio
         bestFoundParticle = bestSolution;
       }
     }
+
+   /* System.out.println("Solucion");
+    for (int i = 0; i < bestFoundParticle.getNumberOfObjectives(); i++) {
+      System.out.print(bestFoundParticle.getObjective(i)+" ");
+    }
+    System.out.println("");
+    System.out.println("asp");
+    for (int i = 0; i < asp.size(); i++) {
+      System.out.print(asp.get(i)+" ");
+    }
+    System.out.println("");
+    calculateDistanceDS(bestFoundParticle, asp);*/
   }
 
+ /* private void calculateDistanceDS(DoubleSolution solution, List<Double> list){
+
+    EuclideanDistanceBetweenSolutionsInSolutionSpace euclidean = new EuclideanDistanceBetweenSolutionsInSolutionSpace();
+
+    System.out.println("Best Solution");
+    for (int i = 0; i <solution.getNumberOfVariables() ; i++) {
+      System.out.print(solution.getVariableValue(i));
+    }
+    System.out.println("");
+    System.out.println("ASP");
+    DoubleSolution ds = problem.createSolution();
+    for (int i = 0; i < ds.getNumberOfVariables(); i++) {
+      ds.setVariableValue(i,list.get(i));
+    }
+    //EuclideanDistance euclideanDistance = new EuclideanDistance();
+
+    //double distance = euclideanDistance.compute(getPointFromSolution(solution),
+    //    getPointFromReferencePoint(referencePoint));
+    double distance = euclidean.getDistance((DoubleSolution)solution,ds);
+    System.out.println("Distance "+distance);
+  }*/
   @Override
   public void updateParticlesMemory(List<DoubleSolution> swarm) {
     for (int i = 0; i < swarm.size(); i++) {

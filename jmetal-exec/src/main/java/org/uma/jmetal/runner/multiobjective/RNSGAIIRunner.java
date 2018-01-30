@@ -95,8 +95,8 @@ public class RNSGAIIRunner extends AbstractAlgorithmRunner {
     //Example fig 2 paper Deb
     referencePoint.add(0.2) ;
     referencePoint.add(0.4) ;
-    referencePoint.add(0.8) ;
-    referencePoint.add(0.4) ;
+   // referencePoint.add(0.8) ;
+    //referencePoint.add(0.4) ;
     //referencePoint.add(0.0) ;
     //referencePoint.add(0.0) ;
     //Example fig 3 paper Deb

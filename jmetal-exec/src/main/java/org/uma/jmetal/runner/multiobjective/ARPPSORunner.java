@@ -78,14 +78,15 @@ public class ARPPSORunner extends AbstractAlgorithmRunner {
     SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
     String referenceParetoFront = "" ;
     int numberIterations =1;//21
-    String problemName = "DTLZ1" ;
+    String problemName = "DTLZ4" ;
     int numberObjectives = 3;
-    int numberVariables = 7;
+    int numberVariables = 12;
     String algorithmName ="WASFGA";
     String weightsName = "MOEAD_Weights/W3D_100.dat";
-    int aspOrden =0;
+    int aspOrden =1;
     int populationSize=100;
-    String aspName = "ppsn_asp/ASP_DTLZ1_3Obj.dat";
+    int iterationIntern =20;
+    String aspName = "ppsn_asp/ASP_DTLZ4_3Obj.dat";
     /*String problemName ;
     if (args.length == 1) {
       problemName = args[0];
@@ -103,6 +104,7 @@ public class ARPPSORunner extends AbstractAlgorithmRunner {
         numberObjectives = Integer.parseInt(args[2]);
         algorithmName = args[3];
         aspOrden = Integer.parseInt(args[4]);
+        iterationIntern = Integer.parseInt(args[5]);
       }
     }
 
@@ -115,7 +117,7 @@ public class ARPPSORunner extends AbstractAlgorithmRunner {
       case "DTLZ2":
         numberVariables = 12;
         problem =new DTLZ2(numberVariables,numberObjectives);
-        aspName = "ppsn_asp/ASP_DTLZ1_3Obj.dat";
+
         break;
       case "DTLZ3":
         numberVariables = 12;
@@ -313,9 +315,9 @@ public class ARPPSORunner extends AbstractAlgorithmRunner {
             selection, new SequentialSolutionListEvaluator<DoubleSolution>(), referencePoint,
             weightsName);
       }
-      algorithm = new ArtificialDecisionMakerPSOBuilder<DoubleSolution>(problem, algorithmRun)
-          .setConsiderationProbability(0.5)//0.3
-          .setMaxEvaluations(11)
+      algorithm = new ArtificialDecisionMakerPSOBuilder<DoubleSolution>(problem, algorithmRun,iterationIntern)
+          .setConsiderationProbability(0.1)//0.3
+          .setMaxEvaluations(10)
           .setTolerance(0.001)//0.001
           .setAsp(asp)
           .setAspFile(aspName)

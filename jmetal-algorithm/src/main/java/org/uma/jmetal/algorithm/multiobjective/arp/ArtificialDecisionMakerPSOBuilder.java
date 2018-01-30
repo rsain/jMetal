@@ -29,17 +29,18 @@ public class ArtificialDecisionMakerPSOBuilder<S extends Solution<?>> implements
   private SolutionListEvaluator<DoubleSolution> evaluator;
   private String aspFile;
   private int aspOrden =0;
+  private int iterationIntern;
   /**
    * ARPBuilder constructor
    */
-  public ArtificialDecisionMakerPSOBuilder(Problem<S> problem, InteractiveAlgorithm<S,List<S>> algorithm
+  public ArtificialDecisionMakerPSOBuilder(Problem<S> problem, InteractiveAlgorithm<S,List<S>> algorithm,int iterationIntern
       ) {
     this.problem = problem;
     this.maxEvaluations = 25000;
     this.algorithm = algorithm;
     this.numberReferencePoints =1;
     this.evaluator  = new SequentialSolutionListEvaluator<>();
-    ;
+    this.iterationIntern = iterationIntern;
   }
 
   public ArtificialDecisionMakerPSOBuilder<S> setMaxEvaluations(int maxEvaluations) {
@@ -109,7 +110,7 @@ public class ArtificialDecisionMakerPSOBuilder<S extends Solution<?>> implements
   public ArtificialDecisionMakerPSO<S> build() {
     ArtificialDecisionMakerPSO<S> algorithmRun = null ;
     algorithmRun = new ArtificialDecisionMakerPSO<S>(problem,algorithm,considerationProbability,tolerance, maxEvaluations,
-          rankingCoeficient,numberReferencePoints,asp,evaluator,aspFile,aspOrden);
+          rankingCoeficient,numberReferencePoints,asp,evaluator,aspFile,aspOrden,iterationIntern);
 
     return algorithmRun ;
   }

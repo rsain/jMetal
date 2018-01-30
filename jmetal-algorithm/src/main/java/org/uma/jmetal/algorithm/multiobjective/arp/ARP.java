@@ -15,8 +15,10 @@ import org.uma.jmetal.problem.impl.AbstractGenericProblem;
 import org.uma.jmetal.problem.impl.AbstractIntegerDoubleProblem;
 import org.uma.jmetal.problem.impl.AbstractIntegerPermutationProblem;
 import org.uma.jmetal.problem.impl.AbstractIntegerProblem;
+import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
+import org.uma.jmetal.util.distance.impl.EuclideanDistanceBetweenSolutionsInObjectiveSpace;
 import org.uma.jmetal.util.point.Point;
 import org.uma.jmetal.util.point.impl.ArrayPoint;
 import org.uma.jmetal.util.point.util.distance.EuclideanDistance;
@@ -217,8 +219,9 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
     List<S> temporal = new ArrayList<>(front);
 
     for(int numRefPoint=0;numRefPoint<numberReferencePoints;numRefPoint++){
-      if(solutionRun!=null) {
-        calculateDistance(solutionRun, asp);
+      if(currentReferencePoint!=null) {
+        calculateDistanceRP(currentReferencePoint, asp);
+       // calculateDistance(solutionRun, asp);
        // calculateDistanceRP(solutionRun, currentReferencePoint);
       }
       S solution = getSolution(temporal,currentReferencePoint);
@@ -247,12 +250,35 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
     return result;
   }
 
-  private void calculateDistance(S solution, ReferencePoint referencePoint){
-    EuclideanDistance euclideanDistance = new EuclideanDistance();
+  private void calculateDistanceRP(ReferencePoint solution, ReferencePoint referencePoint) {
+    EuclideanDistanceBetweenSolutionsInObjectiveSpace euclidean = new EuclideanDistanceBetweenSolutionsInObjectiveSpace();
+    //EuclideanDistance euclideanDistance = new EuclideanDistance();
 
-    double distance = euclideanDistance.compute(getPointFromSolution(solution),
-        getPointFromReferencePoint(referencePoint));
+    //double distance = euclideanDistance.compute(getPointFromSolution(solution),
+    //    getPointFromReferencePoint(referencePoint));
+    double distance = euclidean
+        .getDistance(getSolutionFromRP(solution), getSolutionFromRP(referencePoint));
     distances.add(distance);
+  }
+
+  private void calculateDistance(S solution, ReferencePoint referencePoint) {
+    EuclideanDistanceBetweenSolutionsInObjectiveSpace euclidean = new EuclideanDistanceBetweenSolutionsInObjectiveSpace();
+    //EuclideanDistance euclideanDistance = new EuclideanDistance();
+
+    //double distance = euclideanDistance.compute(getPointFromSolution(solution),
+    //    getPointFromReferencePoint(referencePoint));
+    double distance = euclidean
+        .getDistance((DoubleSolution) solution, getSolutionFromRP(referencePoint));
+    distances.add(distance);
+  }
+  private DoubleSolution getSolutionFromRP(ReferencePoint referencePoint){
+    DoubleSolution result = (DoubleSolution)problem.createSolution();
+    for (int i = 0; i < result.getNumberOfObjectives(); i++) {
+      result.setObjective(i,referencePoint.getObjective(i));
+      result.setVariableValue(i,referencePoint.getObjective(i));
+
+    }
+    return result;
   }
 
   private void calculateDistanceRP(S solution, ReferencePoint referencePoint){
@@ -310,11 +336,15 @@ public class ARP<S extends Solution<?>> extends  AutomaticReferencePoint<S,List<
 
   private S getSolution(List<S> front, ReferencePoint referencePoint) {
     S result = front.get(0);
-    EuclideanDistance euclideanDistance = new EuclideanDistance();
+    EuclideanDistanceBetweenSolutionsInObjectiveSpace euclidean = new EuclideanDistanceBetweenSolutionsInObjectiveSpace();
+    // EuclideanDistance euclideanDistance = new EuclideanDistance();
     SortedMap<Double, S> map = new TreeMap<>();
+    DoubleSolution aux = getSolutionFromRP(referencePoint);
     for (S solution : front) {
-      double distance = euclideanDistance.compute(getPointFromSolution(solution),
-          getPointFromReferencePoint(referencePoint));
+      // double distance = euclideanDistance.compute(getPointFromSolution(solution),
+      //     getPointFromReferencePoint(referencePoint));
+      // map.put(distance, solution);
+      double distance = euclidean.getDistance(solution,aux);
       map.put(distance, solution);
     }
     result = map.get(map.firstKey());

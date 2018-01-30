@@ -89,7 +89,7 @@ public class ARPRunner extends AbstractAlgorithmRunner {
     String weightsName = "MOEAD_Weights/W3D_100.dat";
     int populationSize=100;
     String aspName = "ppsn_asp/ASP_DTLZ1_3Obj.dat";
-    int aspOrden =0;
+    int aspOrden =1;
     /*if (args.length == 1) {
       problemName = args[0];
     } else if (args.length == 2) {
@@ -312,8 +312,8 @@ public class ARPRunner extends AbstractAlgorithmRunner {
             selection, new SequentialSolutionListEvaluator<DoubleSolution>(), referencePoint,weightsName);
       }
       algorithm = new ARPBuilder<DoubleSolution>(problem, algorithmRun)
-          .setConsiderationProbability(0.5)
-          .setMaxEvaluations(11)
+          .setConsiderationProbability(0.1)
+          .setMaxEvaluations(10)
           .setTolerance(0.001)
           .setAsp(asp)
           .setAspFile(aspName)

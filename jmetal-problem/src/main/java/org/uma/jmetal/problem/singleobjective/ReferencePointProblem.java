@@ -23,6 +23,7 @@ public class ReferencePointProblem extends AbstractDoubleProblem {
   private DoubleProblem problem;
   private DoubleSolution solutionAsp;
   EuclideanDistanceBetweenSolutionsInSolutionSpace euclidean;
+  //EuclideanDistanceBetweenSolutionsInObjectiveSpace euclidean;
   public ReferencePointProblem(List<Double> asp,DoubleProblem problem) {
     this.asp = new ArrayList<>(asp) ;
     this.problem = problem;
@@ -53,6 +54,17 @@ public class ReferencePointProblem extends AbstractDoubleProblem {
   public void evaluate(DoubleSolution solution) {
     double result = Math.abs(euclidean.getDistance(solution,solutionAsp));
     solution.setObjective(0, result);
+    /* System.out.println("Solucion");
+    for (int i = 0; i < solution.getNumberOfVariables(); i++) {
+      System.out.print(solution.getVariableValue(i)+" ");
+    }
+    System.out.println("");
+    System.out.println("asp");
+    for (int i = 0; i < solutionAsp.getNumberOfVariables(); i++) {
+      System.out.print(solutionAsp.getVariableValue(i)+" ");
+    }
+    System.out.println("");
+    System.out.println("Distancia "+ result);*/
   }
 }
 
