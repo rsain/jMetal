@@ -15,7 +15,7 @@ import org.uma.jmetal.util.AlgorithmBuilder;
  * @version 1.0
  */
 public class MOEADBuilder implements AlgorithmBuilder<AbstractMOEAD<DoubleSolution>> {
-  public enum Variant {MOEAD, ConstraintMOEAD, MOEADDRA, MOEADSTM, MOEADD} ;
+  public enum Variant {MOEAD, ConstraintMOEAD, MOEADDRA, MOEADSTM, MOEADD, MOEADAWA} ;
 
   protected Problem<DoubleSolution> problem ;
 
@@ -40,6 +40,10 @@ public class MOEADBuilder implements AlgorithmBuilder<AbstractMOEAD<DoubleSoluti
   protected int numberOfThreads ;
 
   protected Variant moeadVariant ;
+
+  /* Parameters of MOEADAWA variant */
+  protected double rateUpdateWeight, rateEvol, epsilon;
+  protected int nus, wag, archiveSize;
 
   /** Constructor */
   public MOEADBuilder(Problem<DoubleSolution> problem, Variant variant) {
@@ -188,10 +192,16 @@ public class MOEADBuilder implements AlgorithmBuilder<AbstractMOEAD<DoubleSoluti
                 crossover, functionType, dataDirectory, neighborhoodSelectionProbability,
                 maximumNumberOfReplacedSolutions, neighborSize);
     } else if (moeadVariant.equals(Variant.MOEADD)) {
-      algorithm = new MOEADD(problem, populationSize, resultPopulationSize, maxEvaluations, crossover, mutation,
+        algorithm = new MOEADD(problem, populationSize, resultPopulationSize, maxEvaluations, crossover, mutation,
               functionType, dataDirectory, neighborhoodSelectionProbability,
               maximumNumberOfReplacedSolutions, neighborSize);
     }
+    else if (moeadVariant.equals(Variant.MOEADAWA)) {
+        algorithm = new MOEADAWA(problem, populationSize, resultPopulationSize, maxEvaluations, crossover, mutation,
+                functionType, dataDirectory, neighborhoodSelectionProbability,
+                maximumNumberOfReplacedSolutions, neighborSize, rateUpdateWeight, nus, wag, rateEvol, archiveSize);
+    }
+
     return algorithm ;
   }
 }
